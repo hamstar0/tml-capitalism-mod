@@ -1,0 +1,26 @@
+v1.2
+-	Implement sell prices
+v1.1.2
+-	Special conditions
+	-	Raise vendor prices if stink potion debuff(?) active on player
+	-	Lower vendor prices if love potion buff(?) active
+
+	-	Add blood moon scaling for female vendor prices
+-	Upgrade net protocol
+-	Upgrade config file
+v1
+-	Release
+-	Config settings
+-	Save price settings with world data
+-	Add to vendor prices if a Tax Collector is present
+-	Capitalism logic
+	-	Add to vendor's prices with each death of that vendor NPC type
+	-	Add price decay
+	-	Adjust shop price based on overall purchases (every 10 silver * 1.01)
+	-	Adjust shop price based on purchases (every 10 silver * 1.1)
+	-	Register each purchase type with respective NPC
+-	Recognize NPC purchase contexts from hooks
+-	Create hook for money transactions (including piggy bank + safe, while not dead)
+-	Create hook for item changes in inventory
+-	Create hook for money changes while talking to npc
+-	Setup project

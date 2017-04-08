@@ -1,0 +1,4 @@
+Town NPCs are now stingy and adhere to the rule of supply & demand. Popular items now (temporarily) get their prices marked up.
+- Formula for markup (v=item value, t=total purchases):
+    v + (v * t * 0.1 * (0.996 ^ t))
+- Config file in Documents/My Games/Terraria/ModLoader/Mod Configs/Capitalism Config.json

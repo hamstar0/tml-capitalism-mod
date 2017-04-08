@@ -1,0 +1,6 @@
+author = hamstar
+version = 1.2.0
+displayName = Capitalism
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+includePDB = false
+homepage = https://forums.terraria.org/index.php?threads/capitalism.52930/
