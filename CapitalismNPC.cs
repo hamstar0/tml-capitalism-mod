@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
+
 namespace Capitalism {
 	class CapitalismNPC : GlobalNPC {
 		public override void SetupShop( int npc_type, Chest shop, ref int next_slot ) {

@@ -4,11 +4,12 @@ using Terraria;
 using Utils;
 using System;
 
+
 namespace Capitalism.Logic {
 	public class VendorLogic {
 		public int NpcType { get; private set; }
 		public IDictionary<int, long> BasePrices { get; private set; }
-		public IDictionary<int, float> TotalPurchases { get; private set; }
+		public IDictionary<int, float> TotalSpendings { get; private set; }
 		
 
 		////////////////
@@ -26,7 +27,7 @@ namespace Capitalism.Logic {
 		private VendorLogic( int npc_type ) {
 			this.NpcType = npc_type;
 
-			this.TotalPurchases = new Dictionary<int, float>();
+			this.TotalSpendings = new Dictionary<int, float>();
 			this.BasePrices = new Dictionary<int, long>();
 
 			Chest shop = NPCHelper.GetShop( this.NpcType );
@@ -41,7 +42,7 @@ namespace Capitalism.Logic {
 				item.SetDefaults( item.type );
 
 				this.BasePrices[ item.type ] = item.value;
-				this.TotalPurchases[item.type] = 0;
+				this.TotalSpendings[item.type] = 0;
 			}
 		}
 
@@ -50,17 +51,17 @@ namespace Capitalism.Logic {
 		public void LoadTotalPurchases( CapitalismMod mymod, int[] total_purchase_types, float[] total_purchases ) {
 			for( int i = 0; i < total_purchases.Length; i++ ) {
 				int item_type = total_purchase_types[i];
-				float purchases = total_purchases[i];
+				float total_spendings = total_purchases[i];
 
-				this.TotalPurchases[item_type] = (float)purchases;
+				this.TotalSpendings[item_type] = (float)total_spendings;
 			}
 
 			this.UpdateShop( mymod );
 		}
 
-		public void SaveTotalPurchases( out int[] total_purchase_types, out float[] total_purchases ) {
-			total_purchase_types = this.TotalPurchases.Keys.ToArray();
-			total_purchases = this.TotalPurchases.Values.ToArray();
+		public void SaveTotalSpendings( out int[] total_spendings_types, out float[] total_spendings ) {
+			total_spendings_types = this.TotalSpendings.Keys.ToArray();
+			total_spendings = this.TotalSpendings.Values.ToArray();
 		}
 
 		////////////////
@@ -86,14 +87,14 @@ namespace Capitalism.Logic {
 					item.SetDefaults( item.type );
 					this.BasePrices[item.type] = item.value;
 				}
-				if( !this.TotalPurchases.Keys.Contains( item.type ) ) {
-					this.TotalPurchases[item.type] = 0;
+				if( !this.TotalSpendings.Keys.Contains( item.type ) ) {
+					this.TotalSpendings[item.type] = 0;
 				}
 
 				// Compute new price
 				long base_price = this.BasePrices[item.type];
-				float purchases = this.TotalPurchases[item.type];
-				long price = VendorLogic.ComputePrice( mymod, base_price, purchases );
+				float spendings = this.TotalSpendings[item.type];
+				long price = VendorLogic.ComputePrice( mymod, base_price, spendings );
 
 				// Female NPCs during a bloodmoon markup their prices
 				bool is_grill = NPCHelper.GetFemaleTownNpcTypes().Contains( this.NpcType );
@@ -129,37 +130,41 @@ namespace Capitalism.Logic {
 		public void AddPurchase( CapitalismMod mymod, int item_type ) {
 			if( !this.BasePrices.Keys.Contains( item_type ) ) { return; }
 			
-			this.TotalPurchases[ item_type ]++;
+			this.TotalSpendings[ item_type ] = VendorLogic.ComputePrice( mymod, this.BasePrices[item_type], this.TotalSpendings[item_type] );
+
 			this.UpdateShop( mymod );
 		}
 		
 		public void DecayPrices( CapitalismMod mymod ) {
 			double rate = mymod.Config.Data.BiDailyDecayPercent;
 
-			foreach( int item_type in this.TotalPurchases.Keys.ToList() ) {
-				this.TotalPurchases[item_type] = (int)((double)this.TotalPurchases[item_type] * rate);	// - 1?
-				if( this.TotalPurchases[item_type] < 0 ) {
-					this.TotalPurchases[item_type] = 0;
+			foreach( int item_type in this.TotalSpendings.Keys.ToList() ) {
+				this.TotalSpendings[item_type] = (int)((double)this.TotalSpendings[item_type] * rate);	// - 1?
+				if( this.TotalSpendings[item_type] < 0 ) {
+					this.TotalSpendings[item_type] = 0;
 				}
 			}
 		}
 		
 		public void Infuriate( CapitalismMod mymod ) {
-			foreach( int item_types in this.TotalPurchases.Keys.ToList() ) {
-				this.TotalPurchases[item_types] *= mymod.Config.Data.InfuriateMultiplier;
+			foreach( int item_types in this.TotalSpendings.Keys.ToList() ) {
+				this.TotalSpendings[item_types] *= mymod.Config.Data.InfuriateMultiplier;
 			}
 		}
 
 		////////////////
 
-		private static long ComputePrice( CapitalismMod mymod, long base_price, float total_purchases ) {
-			double markup_erode = Math.Pow( mymod.Config.Data.MarkupErodeExponentBase, total_purchases );
-			double markup_scale = markup_erode * mymod.Config.Data.MarkupPercent;
-			double markup = (double)base_price * (double)total_purchases * markup_scale;
+		private static long ComputePrice( CapitalismMod mymod, long base_price, float total_spendings ) {
+			// Old formula: b + ( b * t * 0.1 * (0.996 ^ t) )
+			// New formula: b + ( b * (s/10000) * (0.996 ^ (s/1000)) )
+
+
+			double markup_cap = Math.Pow( mymod.Config.Data.MarkupCapExponentBase, (total_spendings / 1000f) );
+			double markup = base_price * (total_spendings / 10000f) * markup_cap * mymod.Config.Data.MarkupMultiplier;
 			
 			long price = base_price + (int)markup;
 			if( NPC.taxCollector ) {
-				price = (long)((double)price * (double)mymod.Config.Data.TaxMarkupPercent);  // Is it worth it?!?!?!
+				price = (long)( (double)price * (double)mymod.Config.Data.TaxMarkupPercent );  // Is it worth it?!?!?!
 			}
 
 			return price;

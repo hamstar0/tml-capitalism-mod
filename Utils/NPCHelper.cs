@@ -2,6 +2,7 @@
 using Terraria;
 using Terraria.ModLoader;
 
+
 namespace Utils {
 	public static class NPCHelper {
 		public static Chest GetShop( int npc_type ) {

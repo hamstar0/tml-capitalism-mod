@@ -6,6 +6,7 @@ using Terraria.ModLoader.IO;
 using Utils;
 using Utils.JsonConfig;
 
+
 namespace Capitalism.Logic {
 	class CapitalismLogic {
 		private static bool IsDay = false;
@@ -48,14 +49,14 @@ namespace Capitalism.Logic {
 					if( !tags.ContainsKey( world_id + "_vendor_npc_type_s_" + i ) ) { continue; }
 
 					int npc_type = tags.GetInt( world_id + "_vendor_npc_type_s_" + i );
-					int[] total_purchase_types = tags.GetIntArray( world_id + "_vendor_total_purchases_types_s_" + i );
-					string json_total_purchases = tags.GetString( world_id + "_vendor_total_purchases_s_" + i );
+					int[] total_purchase_types = tags.GetIntArray( world_id + "_vendor_total_spendings_types_" + i );
+					string json_total_purchases = tags.GetString( world_id + "_vendor_total_spendings_" + i );
 					float[] total_purchases = JsonConfig< float[] >.Deserialize( json_total_purchases );
 
 					if( (Debug.DEBUGMODE & 1) > 0 ) {
-						ErrorLogger.Log( "    load vendor_npc_type_" + i+": " + npc_type );
-						ErrorLogger.Log( "    load vendor_total_purchases_s_types_" + i+": " + string.Join(",",total_purchase_types) );
-						ErrorLogger.Log( "    load vendor_total_purchases_s_" + i+": " + string.Join(",",total_purchases) );
+						ErrorLogger.Log( "    load _vendor_npc_type_s_"+i+": " + npc_type );
+						ErrorLogger.Log( "    load _vendor_total_spendings_types_" + i+": " + string.Join(",",total_purchase_types) );
+						ErrorLogger.Log( "    load _vendor_total_spendings_" + i+": " + string.Join(",",total_purchases) );
 					}
 
 					vendors[npc_type] = VendorLogic.Create( npc_type );
@@ -88,17 +89,17 @@ namespace Capitalism.Logic {
 					int[] total_purchase_types;
 					float[] total_purchases;
 
-					vendor.SaveTotalPurchases( out total_purchase_types, out total_purchases );
+					vendor.SaveTotalSpendings( out total_purchase_types, out total_purchases );
 					string json_total_purchases = JsonConfig< float[] >.Serialize( total_purchases );
 
 					tags.Set( world_id + "_vendor_npc_type_s_" + i, kv.Key );
-					tags.Set( world_id + "_vendor_total_purchases_types_s_" + i, total_purchase_types );
-					tags.Set( world_id + "_vendor_total_purchases_s_" + i, json_total_purchases );
+					tags.Set( world_id + "_vendor_total_spendings_types_" + i, total_purchase_types );
+					tags.Set( world_id + "_vendor_total_spendings_" + i, json_total_purchases );
 
 					if( (Debug.DEBUGMODE & 1) > 0 ) {
 						ErrorLogger.Log( "    save " + world_id + "_vendor_npc_type_s_" + i + ": " + (int)kv.Key );
-						ErrorLogger.Log( "    save " + world_id + "_vendor_total_purchases_types_s_" + i + ": " + String.Join( ",", total_purchase_types ) );
-						ErrorLogger.Log( "    save " + world_id + "_vendor_total_purchases_s_" + i + ": " + String.Join( ",", total_purchases ) );
+						ErrorLogger.Log( "    save " + world_id + "_vendor_total_spendings_types_" + i + ": " + String.Join( ",", total_purchase_types ) );
+						ErrorLogger.Log( "    save " + world_id + "_vendor_total_spendings_" + i + ": " + String.Join( ",", total_purchases ) );
 					}
 					i++;
 				}

@@ -1,10 +1,13 @@
-v1.2
+v1.4.0
 -	Implement sell prices
-v1.1.2
+-	Add supply limits of items (based on price)
+
+v1.2.1
+-	Change formula to use 'total spent' instead of 'total purchases'
+v1.2.0
 -	Special conditions
 	-	Raise vendor prices if stink potion debuff(?) active on player
 	-	Lower vendor prices if love potion buff(?) active
-
 	-	Add blood moon scaling for female vendor prices
 -	Upgrade net protocol
 -	Upgrade config file
