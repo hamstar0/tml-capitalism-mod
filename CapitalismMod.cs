@@ -9,10 +9,10 @@ using Terraria.ModLoader;
 namespace Capitalism {
 	public class ConfigurationData {
 		public string VersionSinceUpdate = "";
-		public float MarkupMultiplier = 1.0f;
-		public float TaxMarkupPercent = 1.1f;
-		public int InfuriateMultiplier = 2;
-		public float BiDailyDecayPercent = 0.95f;
+		public float MarkupPercent = 0.02f;
+		public float TaxMarkupPercent = 1.02f;
+		public float InfuriationMarkupPercent = 1.5f;
+		public float BiDailyDecayMarkdownPercent = 0.95f;
 		public float MarkupCapExponentBase = 0.996f;
 		public float FemaleBloodMoonMarkupPercent = 1.1f;
 		public float LovestruckMarkdownPercent = 0.9f;
@@ -22,7 +22,7 @@ namespace Capitalism {
 	
 
 	public class CapitalismMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 2, 1);
+		public readonly static Version ConfigVersion = new Version(1, 2, 2);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
