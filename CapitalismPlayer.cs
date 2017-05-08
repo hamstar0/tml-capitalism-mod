@@ -14,7 +14,7 @@ namespace Capitalism {
 
 		public override void Initialize() {
 			if( this.Logic == null ) {
-				this.Logic = new CapitalismLogic( (CapitalismMod)this.mod );
+				this.Logic = new CapitalismLogic();
 			}
 		}
 
@@ -43,11 +43,12 @@ namespace Capitalism {
 
 		public override void Load( TagCompound tags ) {
 			try {
+				var mymod = (CapitalismMod)this.mod;
 				int total_worlds = tags.GetInt( "vendor_world_count" );
 
 				for( int i=0; i< total_worlds; i++ ) {
 					string id = tags.GetString( "vendor_world_id_" + i );
-					this.Logic.LoadVendorsForCurrentPlayer( tags, id );
+					this.Logic.LoadVendorsForCurrentPlayer( mymod, tags, id );
 				}
 			} catch( Exception e ) {
 				ErrorLogger.Log( e.ToString() );
@@ -72,7 +73,7 @@ namespace Capitalism {
 		////////////////
 
 		public override void PreUpdate() {
-			this.Logic.Update( this.player );
+			this.Logic.Update( (CapitalismMod)this.mod, this.player );
 		}
 
 
@@ -80,13 +81,13 @@ namespace Capitalism {
 
 		public void UpdateGivenShop( int npc_type, Chest shop, ref int nextSlot ) {
 			if( this.Logic != null ) {
-				this.Logic.UpdateGivenShop( this.player, npc_type, shop, ref nextSlot );
+				this.Logic.UpdateGivenShop( (CapitalismMod)this.mod, this.player, npc_type, shop, ref nextSlot );
 			}
 		}
 
 		public bool InfuriateVendor( int npc_type ) {
 			if( this.Logic != null ) {
-				return this.Logic.InfuriateVendor( npc_type );
+				return this.Logic.InfuriateVendor( (CapitalismMod)this.mod, npc_type );
 			}
 			return false;
 		}

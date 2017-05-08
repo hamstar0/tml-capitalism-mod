@@ -11,12 +11,11 @@ namespace Capitalism.Logic {
 	class CapitalismLogic {
 		private static bool IsDay = false;
 
-		private CapitalismMod MyMod;
-
 		public IDictionary<string, IDictionary<int, VendorLogic>> VendorWorlds { get; private set; }
 		private IDictionary<long, double> SellPrices = new Dictionary<long, double>();
-
+		
 		private long LastMoney = 0;
+		private Item LastBuyItem = null;
 		private IDictionary<int, KeyValuePair<int, int>> PrevInventoryInfos = new Dictionary<int, KeyValuePair<int, int>>();
 		private KeyValuePair<int, int> PrevMouseInfo;
 
@@ -24,17 +23,16 @@ namespace Capitalism.Logic {
 
 		////////////////
 
-		public CapitalismLogic( CapitalismMod mymod ) {
+		public CapitalismLogic() {
 			this.VendorWorlds = new Dictionary<string, IDictionary<int, VendorLogic>>();
-			this.MyMod = mymod;
 		}
 
 		////////////////
 
-		public void LoadVendorsForCurrentPlayer( TagCompound tags, string world_id ) {
+		public void LoadVendorsForCurrentPlayer( CapitalismMod mymod, TagCompound tags, string world_id ) {
 			try {
 				int vendor_count = tags.GetInt( world_id + "_vendor_count" );
-				if( (Debug.DEBUGMODE & 1) > 0 ) {
+				if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
 					ErrorLogger.Log( "  load vendor count: " + vendor_count );
 				}
 
@@ -57,7 +55,7 @@ namespace Capitalism.Logic {
 					float[] total_purchases = JsonConfig<float[]>.Deserialize( json_total_purchases );
 					float[] total_spendings = JsonConfig<float[]>.Deserialize( json_total_spendings );
 					
-					if( (Debug.DEBUGMODE & 1) > 0 ) {
+					if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
 						ErrorLogger.Log( "    load " + world_id + "_vendor_npc_types_" + i + ": " + npc_type );
 						ErrorLogger.Log( "    load " + world_id + "_vendor_total_purchase_types_" + i + ": " + string.Join( ",", total_purchase_types ) );
 						ErrorLogger.Log( "    load " + world_id + "_vendor_total_spendings_types_" + i + ": " + string.Join( ",", total_spendings_types ) );
@@ -67,7 +65,7 @@ namespace Capitalism.Logic {
 
 					vendors[npc_type] = VendorLogic.Create( npc_type );
 					if( vendors[npc_type] != null ) {
-						vendors[npc_type].LoadTotalPurchases( this.MyMod, total_purchase_types, total_spendings_types, total_purchases, total_spendings );
+						vendors[npc_type].LoadTotalPurchases( mymod, total_purchase_types, total_spendings_types, total_purchases, total_spendings );
 					}
 				}
 			} catch( Exception e ) {
@@ -82,7 +80,7 @@ namespace Capitalism.Logic {
 				IDictionary<int, VendorLogic> vendors = world_vendors.Value;
 
 				tags.Set( world_id + "_vendor_count", vendors.Count );
-				if( (Debug.DEBUGMODE & 1) > 0 ) {
+				if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
 					ErrorLogger.Log( "  save " + world_id + "_vendor_count: " + vendors.Count );
 				}
 
@@ -106,7 +104,7 @@ namespace Capitalism.Logic {
 					tags.Set( world_id + "_vendor_total_purchases_str_" + i, json_total_purchases );
 					tags.Set( world_id + "_vendor_total_spendings_str_" + i, json_total_spendings );
 
-					if( (Debug.DEBUGMODE & 1) > 0 ) {
+					if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
 						ErrorLogger.Log( "    save " + world_id + "_vendor_npc_types_" + i + ": " + (int)npc_type );
 						ErrorLogger.Log( "    save " + world_id + "_vendor_total_purchase_types_" + i + ": " + String.Join( ",", total_purchase_types ) );
 						ErrorLogger.Log( "    save " + world_id + "_vendor_total_spendings_types_" + i + ": " + String.Join( ",", total_spendings_types ) );
@@ -120,18 +118,18 @@ namespace Capitalism.Logic {
 
 		////////////////
 
-		private bool IsReady( Player player ) {
+		private bool IsReady( CapitalismMod mymod, Player player ) {
 			if( Main.netMode == 2 ) { return false; }	// Client of single only
 			if( player.whoAmI != Main.myPlayer ) { return false; }	// Current player only
-			if( this.MyMod.GetModWorld<CapitalismWorld>().ID == "" ) { return false; }
+			if( mymod.GetModWorld<CapitalismWorld>().ID == "" ) { return false; }
 			if( this.StartupDelay++ < 60*2 ) { return false; }
 			return true;
 		}
 		private int StartupDelay = 0;
 
 
-		public void Update( Player player ) {
-			if( !this.IsReady( player ) ) {
+		public void Update( CapitalismMod mymod, Player player ) {
+			if( !this.IsReady( mymod, player ) ) {
 				CapitalismLogic.IsDay = Main.dayTime;
 				return;
 			}
@@ -140,10 +138,12 @@ namespace Capitalism.Logic {
 				long money = PlayerHelper.CountMoney( player );
 				long spent = this.LastMoney - money;
 
+				this.LastMoney = money;
+
 				if( spent > 0 ) {
-					this.AccountForPurchase( player, spent );
+					this.AccountForPurchase( mymod, player, spent, ref this.LastBuyItem );
 				} else if( spent < 0 ) {
-					this.AccountForSale( player, -spent );
+					this.AccountForSale( mymod, player, -spent );
 				}
 
 				// Snapshot current inventory
@@ -156,37 +156,46 @@ namespace Capitalism.Logic {
 						this.PrevInventoryInfos[i] = new KeyValuePair<int, int>( 0, 0 );
 					}
 				}
-				
+
 				if( Main.mouseItem != null ) {
 					this.PrevMouseInfo = new KeyValuePair<int, int>( Main.mouseItem.type, Main.mouseItem.stack );
 				} else {
 					this.PrevMouseInfo = new KeyValuePair<int, int>( 0, 0 );
 				}
-
-				this.LastMoney = money;
 			}
 
 			// Advance day
 			if( CapitalismLogic.IsDay != Main.dayTime ) {
 				CapitalismLogic.IsDay = Main.dayTime;
 
-				this.DecayAllVendorPrices( player );
+				this.DecayAllVendorPrices( mymod, player );
 			}
 		}
 
 
 		////////////////
 
-		private void AccountForPurchase( Player player, long spent ) {
+		private void AccountForPurchase( CapitalismMod mymod, Player player, long spent, ref Item last_buy_item ) {
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
+			if( modworld.ID.Length == 0 ) {
+				ErrorLogger.Log( "AccountForPurchase - No world id set." );
+				return;
+			}
+			NPC talk_npc = Main.npc[player.talkNPC];
+			if( talk_npc == null || !talk_npc.active ) {
+				ErrorLogger.Log( "AccountForPurchase - No shop npc." );
+				return;
+			}
 			ISet<int> possible_purchases = PlayerHelper.FindPossiblePurchaseTypes( player, spent );
-
+			Item item = null;
+			int stack = 1;
+			
 			if( possible_purchases.Count > 0 ) {
 				var changes_at = PlayerHelper.FindInventoryChanges( player, this.PrevMouseInfo, this.PrevInventoryInfos );
 				changes_at = ItemHelper.FilterByTypes( changes_at, possible_purchases );
 
 				if( changes_at.Count == 1 ) {
 					foreach( var entry in changes_at ) {
-						Item item;
 						if( entry.Key == -1 ) {
 							item = Main.mouseItem;
 						} else {
@@ -194,21 +203,37 @@ namespace Capitalism.Logic {
 						}
 
 						if( item != null ) {
-							this.BoughtFrom( player, Main.npc[player.talkNPC], item, entry.Value.Value );
+							//stack = entry.Value.Value;
+							break;
 						}
 					}
 				}
+			} else {
+				if( last_buy_item != null ) {
+					var vendor = this.GetOrCreateVendor( modworld.ID, talk_npc.type );
+					int value = (int)vendor.GetPriceOf( mymod, last_buy_item.type );
+
+					if( (spent % value) == 0 ) {
+						item = last_buy_item;
+						stack = (int)(spent / value);
+					}
+				}
+			}
+
+			if( item != null ) {
+				this.BoughtFrom( mymod, player, talk_npc, item, stack );
+				last_buy_item = item;
 			}
 		}
 
-		private void AccountForSale( Player player, long earned ) {
+		private void AccountForSale( CapitalismMod mymod, Player player, long earned ) {
 			// TODO
 		}
 
 		////////////////
 
-		public void UpdateGivenShop( Player player, int npc_type, Chest shop, ref int nextSlot ) {
-			var modworld = this.MyMod.GetModWorld<CapitalismWorld>();
+		public void UpdateGivenShop( CapitalismMod mymod, Player player, int npc_type, Chest shop, ref int nextSlot ) {
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			if( modworld.ID.Length == 0 ) {
 				return;
 			}
@@ -219,11 +244,11 @@ namespace Capitalism.Logic {
 				return;
 			}
 
-			vendor.UpdateShop( this.MyMod, shop );
+			vendor.UpdateShop( mymod, shop );
 		}
 
-		public bool InfuriateVendor( int npc_type ) {
-			var modworld = this.MyMod.GetModWorld<CapitalismWorld>();
+		public bool InfuriateVendor( CapitalismMod mymod, int npc_type ) {
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			if( modworld.ID.Length == 0 ) {
 				ErrorLogger.Log( "InfuriateVendor - No world id set." );
 				return false;
@@ -235,7 +260,7 @@ namespace Capitalism.Logic {
 				return false;
 			}
 
-			vendor.Infuriate( this.MyMod );
+			vendor.Infuriate( mymod );
 			return true;
 		}
 
@@ -259,8 +284,8 @@ namespace Capitalism.Logic {
 
 		////////////////
 
-		public void BoughtFrom( Player player, NPC npc, Item item, long _ ) {
-			var modworld = this.MyMod.GetModWorld<CapitalismWorld>();
+		public void BoughtFrom( CapitalismMod mymod, Player player, NPC npc, Item item, int stack ) {
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			if( modworld.ID.Length == 0 ) {
 				ErrorLogger.Log( "BoughtFrom - No world id." );
 				return;
@@ -268,7 +293,9 @@ namespace Capitalism.Logic {
 
 			var vendor = this.GetOrCreateVendor( modworld.ID, npc.type );
 			if( vendor != null ) {
-				vendor.AddPurchase( this.MyMod, item.type );
+				for( int i=0; i<stack; i++ ) {
+					vendor.AddPurchase( mymod, item.type );
+				}
 			}
 		}
 
@@ -289,8 +316,8 @@ Main.NewText( "Sold "+ item.name + " to "+_.name+" for "+earned+", deducted " + 
 		}*/
 
 
-		public void DecayAllVendorPrices( Player player ) {
-			var modworld = this.MyMod.GetModWorld<CapitalismWorld>();
+		public void DecayAllVendorPrices( CapitalismMod mymod, Player player ) {
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			if( modworld.ID == null || modworld.ID.Length == 0 ) {
 				ErrorLogger.Log( "DecayAllVendorPrices - No world id." );
 				return;
@@ -298,7 +325,7 @@ Main.NewText( "Sold "+ item.name + " to "+_.name+" for "+earned+", deducted " + 
 			
 			foreach( var kv in this.GetOrCreateWorldVendors(modworld.ID) ) {
 				if( kv.Value != null ) {
-					kv.Value.DecayPrices( this.MyMod );
+					kv.Value.DecayPrices( mymod );
 				}
 			}
 		}

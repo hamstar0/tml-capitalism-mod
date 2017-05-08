@@ -4,6 +4,7 @@ using Terraria;
 using Utils;
 using System;
 
+
 namespace Capitalism.Logic {
 	public class VendorLogic {
 		public int NpcType { get; private set; }
@@ -93,21 +94,8 @@ namespace Capitalism.Logic {
 		}
 
 		private int UpdateShopItem( CapitalismMod mymod, Item item, Chest shop = null ) {
-			// Register the initial base price of an item once and for all
-			if( !this.BasePrices.Keys.Contains( item.type ) ) {
-				item.SetDefaults( item.type );
-				this.BasePrices[item.type] = item.value;
-			}
-			if( !this.TotalSpendings.Keys.Contains( item.type ) ) {
-				this.TotalPurchases[item.type] = 0;
-				this.TotalSpendings[item.type] = 0;
-			}
-
 			// Compute new price
-			long base_price = this.BasePrices[item.type];
-			float total_purchases = this.TotalPurchases[item.type];
-			float total_spendings = this.TotalSpendings[item.type];
-			int price = (int)VendorLogic.ComputePrice( mymod, base_price, total_purchases, total_spendings );
+			int price = (int)this.GetPriceOf( mymod, item.type );
 
 			// Female NPCs during a bloodmoon markup their prices
 			bool is_grill = NPCHelper.GetFemaleTownNpcTypes().Contains( this.NpcType );
@@ -136,18 +124,39 @@ namespace Capitalism.Logic {
 
 			return price;
 		}
-		
+
 		////////////////
-		
-		public void AddPurchase( CapitalismMod mymod, int item_type ) {
-			if( !this.BasePrices.Keys.Contains( item_type ) ) { return; }
+
+		public float GetPriceOf( CapitalismMod mymod, int item_type ) {
+			// Register the initial base price of an item once and for all
+			if( !this.BasePrices.Keys.Contains( item_type ) ) {
+				Item item = new Item();
+				item.SetDefaults( item_type );
+				this.BasePrices[item_type] = item.value;
+			}
+			if( !this.TotalSpendings.Keys.Contains( item_type ) ) {
+				this.TotalPurchases[item_type] = 0;
+				this.TotalSpendings[item_type] = 0;
+			}
 
 			long base_price = this.BasePrices[item_type];
 			float total_purchases = this.TotalPurchases[item_type];
 			float total_spendings = this.TotalSpendings[item_type];
+			return VendorLogic.ComputePrice( mymod, (float)base_price, total_purchases, total_spendings );
+		}
 
-			this.TotalSpendings[ item_type ] += VendorLogic.ComputePrice( mymod, base_price, total_purchases, total_spendings );
+
+		public void AddPurchase( CapitalismMod mymod, int item_type ) {
+			float price = this.GetPriceOf( mymod, item_type );
+			if( price == 0 ) { return; }
+
+			this.TotalSpendings[ item_type ] += price;
 			this.TotalPurchases[ item_type ] += 1;
+//Main.NewText( "  ");
+//Main.NewText( "item_type "+ item_type);
+//Main.NewText( "base_price "+ base_price);
+//Main.NewText( "purchases "+ total_purchases);
+//Main.NewText( "price " + price);
 
 			this.UpdateShop( mymod );
 		}
@@ -173,13 +182,16 @@ namespace Capitalism.Logic {
 		////////////////
 
 		private static float ComputePrice( CapitalismMod mymod, float base_price, float purchases, float spendings ) {
-			// Old formula: b + ( b * t * 0.1 * (0.996 ^ t) )
-			// New formula: b + ( b * t * 0.02 * (0.996 ^ ((t/4) + (s/10000))) )
+			// v1 formula: b + ( b * t * 0.1 * (0.996 ^ t) )
+			// v2 formula: b + ( b * t * 0.02 * (0.996 ^ ((t/4) + (s/10000))) )
+			// v3 formula: b + ( (b * t)^0.8 ) / 50
 
-			if( spendings == 0 ) { spendings = float.Epsilon; }
-			float cap = (float)Math.Pow( mymod.Config.Data.MarkupCapExponentBase, ((purchases / 4f) + (spendings / 10000f)) );
-			float markup = base_price * (purchases/4) * cap * mymod.Config.Data.MarkupPercent;
-			
+			float exp = mymod.Config.Data.MarkupExponent;
+			float div = mymod.Config.Data.MarkupDivisor;
+
+			//if( spendings == 0 ) { spendings = float.Epsilon; }
+			float markup = (float)Math.Pow( (base_price * purchases), exp ) / div;
+
 			if( NPC.taxCollector ) {
 				markup *= mymod.Config.Data.TaxMarkupPercent;  // Is it worth it?!?!?!
 			}

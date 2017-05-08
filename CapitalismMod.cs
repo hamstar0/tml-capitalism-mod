@@ -9,11 +9,14 @@ using Terraria.ModLoader;
 namespace Capitalism {
 	public class ConfigurationData {
 		public string VersionSinceUpdate = "";
-		public float MarkupPercent = 0.02f;
+
+		public float MarkupExponent = 0.8f;
+		public float MarkupDivisor = 50f;
 		public float TaxMarkupPercent = 1.02f;
 		public float InfuriationMarkupPercent = 1.5f;
+
 		public float BiDailyDecayMarkdownPercent = 0.95f;
-		public float MarkupCapExponentBase = 0.996f;
+
 		public float FemaleBloodMoonMarkupPercent = 1.1f;
 		public float LovestruckMarkdownPercent = 0.9f;
 		public float StinkyMarkupPercent = 1.1f;
@@ -22,7 +25,7 @@ namespace Capitalism {
 	
 
 	public class CapitalismMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 2, 2);
+		public readonly static Version ConfigVersion = new Version(1, 3, 0);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
@@ -85,7 +88,7 @@ namespace Capitalism {
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
-			Debug.PrintToBatch( sb );
+			DebugHelper.PrintToBatch( sb );
 		}
 	}
 }

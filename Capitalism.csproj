@@ -54,7 +54,7 @@
     <Compile Include="CapitalismMod.cs" />
     <Compile Include="CapitalismNetProtocol.cs" />
     <Compile Include="CapitalismNPC.cs" />
-    <Compile Include="Utils\Debug.cs" />
+    <Compile Include="Utils\DebugHelper.cs" />
     <Compile Include="Logic\VendorLogic.cs" />
     <Compile Include="CapitalismPlayer.cs" />
     <Compile Include="CapitalismWorld.cs" />
