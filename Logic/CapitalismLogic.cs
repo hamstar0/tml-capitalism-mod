@@ -141,9 +141,11 @@ namespace Capitalism.Logic {
 				this.LastMoney = money;
 
 				if( spent > 0 ) {
-					this.AccountForPurchase( mymod, player, spent, ref this.LastBuyItem );
+					this.LastBuyItem = this.AccountForPurchase( mymod, player, spent, this.LastBuyItem );
 				} else if( spent < 0 ) {
 					this.AccountForSale( mymod, player, -spent );
+				} else {
+					this.LastBuyItem = null;
 				}
 
 				// Snapshot current inventory
@@ -175,16 +177,12 @@ namespace Capitalism.Logic {
 
 		////////////////
 
-		private void AccountForPurchase( CapitalismMod mymod, Player player, long spent, ref Item last_buy_item ) {
+		private Item AccountForPurchase( CapitalismMod mymod, Player player, long spent, Item last_buy_item ) {
 			var modworld = mymod.GetModWorld<CapitalismWorld>();
-			if( modworld.ID.Length == 0 ) {
-				ErrorLogger.Log( "AccountForPurchase - No world id set." );
-				return;
-			}
 			NPC talk_npc = Main.npc[player.talkNPC];
 			if( talk_npc == null || !talk_npc.active ) {
 				ErrorLogger.Log( "AccountForPurchase - No shop npc." );
-				return;
+				return null;
 			}
 			ISet<int> possible_purchases = PlayerHelper.FindPossiblePurchaseTypes( player, spent );
 			Item item = null;
@@ -203,12 +201,18 @@ namespace Capitalism.Logic {
 						}
 
 						if( item != null ) {
-							//stack = entry.Value.Value;
-							break;
+							// Must be a false positive?
+							if( last_buy_item != null && last_buy_item.type != item.type ) {
+								item = null;
+							} else {
+								//stack = entry.Value.Value;
+								break;
+							}
 						}
 					}
 				}
-			} else {
+			}
+			if( item == null ) {
 				if( last_buy_item != null ) {
 					var vendor = this.GetOrCreateVendor( modworld.ID, talk_npc.type );
 					int value = (int)vendor.GetPriceOf( mymod, last_buy_item.type );
@@ -222,9 +226,10 @@ namespace Capitalism.Logic {
 
 			if( item != null ) {
 				this.BoughtFrom( mymod, player, talk_npc, item, stack );
-				last_buy_item = item;
 			}
+			return item;
 		}
+
 
 		private void AccountForSale( CapitalismMod mymod, Player player, long earned ) {
 			// TODO
