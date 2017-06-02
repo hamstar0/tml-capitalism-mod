@@ -6,6 +6,9 @@ using Terraria.ModLoader;
 namespace Capitalism {
 	class CapitalismNPC : GlobalNPC {
 		public override void SetupShop( int npc_type, Chest shop, ref int next_slot ) {
+			var mymod = (CapitalismMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			try {
 				Player player = Main.player[Main.myPlayer];
 				var modplayer = player.GetModPlayer<CapitalismPlayer>( this.mod );
@@ -20,6 +23,9 @@ namespace Capitalism {
 		
 		public override bool CheckDead( NPC npc ) {
 			bool check = base.CheckDead( npc );
+			var mymod = (CapitalismMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return check; }
+
 			try {
 				Player player = Main.player[Main.myPlayer];
 				if( player != null ) { return check; }

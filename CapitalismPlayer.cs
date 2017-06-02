@@ -73,6 +73,9 @@ namespace Capitalism {
 		////////////////
 
 		public override void PreUpdate() {
+			var mymod = (CapitalismMod)this.mod;
+			if( !mymod.Config.Data.Enabled ) { return; }
+
 			this.Logic.Update( (CapitalismMod)this.mod, this.player );
 		}
 

@@ -10,6 +10,8 @@ namespace Capitalism {
 	public class ConfigurationData {
 		public string VersionSinceUpdate = "";
 
+		public bool Enabled = true;
+
 		public float MarkupExponent = 0.8f;
 		public float MarkupDivisor = 50f;
 		public float TaxMarkupPercent = 1.02f;
@@ -25,7 +27,7 @@ namespace Capitalism {
 	
 
 	public class CapitalismMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 3, 0);
+		public readonly static Version ConfigVersion = new Version(1, 3, 2);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
@@ -88,6 +90,8 @@ namespace Capitalism {
 		////////////////
 
 		public override void PostDrawInterface( SpriteBatch sb ) {
+			if( !this.Config.Data.Enabled ) { return; }
+
 			DebugHelper.PrintToBatch( sb );
 		}
 	}

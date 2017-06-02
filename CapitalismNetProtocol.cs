@@ -11,7 +11,7 @@ namespace Capitalism {
 
 
 
-	public class CapitalismNetProtocol {
+	public static class CapitalismNetProtocol {
 		public static void RoutePacket( CapitalismMod mymod, BinaryReader reader ) {
 			CapitalismNetProtocolTypes protocol = (CapitalismNetProtocolTypes)reader.ReadByte();
 

@@ -88,8 +88,15 @@ namespace Capitalism.Logic {
 				// Update only the first instance of an item
 				if( found_types.Contains(item.type) ) { continue; }
 				found_types.Add( item.type );
-				
-				item.value = this.UpdateShopItem( mymod, item, shop );
+
+				int value = this.UpdateShopItem( mymod, item, shop );
+				double base_price = (double)this.BasePrices[ item.type ];
+				double markup = ((double)value - base_price) / base_price;
+
+				item.value = value;
+				if( markup >= 0.001d ) {
+					item.toolTip2 = "Has +" + (markup * 100d).ToString("N0") + "% markup";
+				}
 			}
 		}
 

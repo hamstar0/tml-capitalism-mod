@@ -2,6 +2,9 @@ v1.4.0
 -	Implement sell prices
 -	Add supply limits of items (based on price)
 
+v1.3.2
+-	Add 'Enabled' config setting
+-	Add tooltips to shop items to indicate total markup
 v1.2.1
 -	Change formula to use 'total spent' instead of 'total purchases'
 v1.2.0
