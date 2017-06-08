@@ -1,6 +1,7 @@
 author = hamstar
-version = 1.3.2.1
+version = 1.3.3
 displayName = Capitalism
+modReferences = HamstarHelpers
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
-includePDB = false
+includePDB = true
 homepage = https://forums.terraria.org/index.php?threads/capitalism.52930/

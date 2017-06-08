@@ -1,6 +1,4 @@
-﻿using Utils;
-using Utils.JsonConfig;
-using Microsoft.Xna.Framework.Graphics;
+﻿using HamstarHelpers.Utilities.Config;
 using System;
 using System.IO;
 using Terraria.ModLoader;
@@ -27,7 +25,7 @@ namespace Capitalism {
 	
 
 	public class CapitalismMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 3, 2);
+		public readonly static Version ConfigVersion = new Version(1, 3, 3);
 		public JsonConfig<ConfigurationData> Config { get; private set; }
 
 
@@ -85,14 +83,6 @@ namespace Capitalism {
 				ErrorLogger.Log( e.ToString() );
 				throw e;
 			}
-		}
-
-		////////////////
-
-		public override void PostDrawInterface( SpriteBatch sb ) {
-			if( !this.Config.Data.Enabled ) { return; }
-
-			DebugHelper.PrintToBatch( sb );
 		}
 	}
 }

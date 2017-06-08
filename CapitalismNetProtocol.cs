@@ -5,8 +5,8 @@ using Terraria.ModLoader;
 
 namespace Capitalism {
 	public enum CapitalismNetProtocolTypes : byte {
-		SendSettingsRequest,
-		SendSettings
+		RequestModSettings,
+		ModSettings
 	}
 
 
@@ -16,10 +16,10 @@ namespace Capitalism {
 			CapitalismNetProtocolTypes protocol = (CapitalismNetProtocolTypes)reader.ReadByte();
 
 			switch( protocol ) {
-			case CapitalismNetProtocolTypes.SendSettingsRequest:
+			case CapitalismNetProtocolTypes.RequestModSettings:
 				CapitalismNetProtocol.ReceiveSettingsRequestOnServer( mymod, reader );
 				break;
-			case CapitalismNetProtocolTypes.SendSettings:
+			case CapitalismNetProtocolTypes.ModSettings:
 				CapitalismNetProtocol.ReceiveSettingsOnClient( mymod, reader );
 				break;
 			default:
@@ -38,7 +38,7 @@ namespace Capitalism {
 			if( Main.netMode != 1 ) { return; } // Clients only
 
 			ModPacket packet = mymod.GetPacket();
-			packet.Write( (byte)CapitalismNetProtocolTypes.SendSettingsRequest );
+			packet.Write( (byte)CapitalismNetProtocolTypes.RequestModSettings );
 			packet.Write( (int)player.whoAmI );
 			packet.Send();
 		}
@@ -51,7 +51,7 @@ namespace Capitalism {
 			if( Main.netMode != 2 ) { return; } // Server only
 
 			ModPacket packet = mymod.GetPacket();
-			packet.Write( (byte)CapitalismNetProtocolTypes.SendSettings );
+			packet.Write( (byte)CapitalismNetProtocolTypes.ModSettings );
 			packet.Write( (string)mymod.Config.SerializeMe() );
 
 			packet.Send( who );

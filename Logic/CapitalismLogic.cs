@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HamstarHelpers.ItemHelpers;
+using HamstarHelpers.PlayerHelpers;
+using HamstarHelpers.Utilities.Config;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
-using Utils;
-using Utils.JsonConfig;
 
 
 namespace Capitalism.Logic {
@@ -32,9 +33,6 @@ namespace Capitalism.Logic {
 		public void LoadVendorsForCurrentPlayer( CapitalismMod mymod, TagCompound tags, string world_id ) {
 			try {
 				int vendor_count = tags.GetInt( world_id + "_vendor_count" );
-				if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-					ErrorLogger.Log( "  load vendor count: " + vendor_count );
-				}
 
 				IDictionary<int, VendorLogic> vendors;
 				if( this.VendorWorlds.Keys.Contains( world_id ) && this.VendorWorlds[world_id] != null ) {
@@ -55,13 +53,13 @@ namespace Capitalism.Logic {
 					float[] total_purchases = JsonConfig<float[]>.Deserialize( json_total_purchases );
 					float[] total_spendings = JsonConfig<float[]>.Deserialize( json_total_spendings );
 					
-					if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-						ErrorLogger.Log( "    load " + world_id + "_vendor_npc_types_" + i + ": " + npc_type );
-						ErrorLogger.Log( "    load " + world_id + "_vendor_total_purchase_types_" + i + ": " + string.Join( ",", total_purchase_types ) );
-						ErrorLogger.Log( "    load " + world_id + "_vendor_total_spendings_types_" + i + ": " + string.Join( ",", total_spendings_types ) );
-						ErrorLogger.Log( "    load " + world_id + "_vendor_total_purchases_str_" + i + ": " + json_total_purchases );
-						ErrorLogger.Log( "    load " + world_id + "_vendor_total_spendings_str_" + i + ": " + json_total_spendings );
-					}
+					//if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
+					//	ErrorLogger.Log( "    load " + world_id + "_vendor_npc_types_" + i + ": " + npc_type );
+					//	ErrorLogger.Log( "    load " + world_id + "_vendor_total_purchase_types_" + i + ": " + string.Join( ",", total_purchase_types ) );
+					//	ErrorLogger.Log( "    load " + world_id + "_vendor_total_spendings_types_" + i + ": " + string.Join( ",", total_spendings_types ) );
+					//	ErrorLogger.Log( "    load " + world_id + "_vendor_total_purchases_str_" + i + ": " + json_total_purchases );
+					//	ErrorLogger.Log( "    load " + world_id + "_vendor_total_spendings_str_" + i + ": " + json_total_spendings );
+					//}
 
 					vendors[npc_type] = VendorLogic.Create( npc_type );
 					if( vendors[npc_type] != null ) {
@@ -80,9 +78,9 @@ namespace Capitalism.Logic {
 				IDictionary<int, VendorLogic> vendors = world_vendors.Value;
 
 				tags.Set( world_id + "_vendor_count", vendors.Count );
-				if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-					ErrorLogger.Log( "  save " + world_id + "_vendor_count: " + vendors.Count );
-				}
+				//if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
+				//	ErrorLogger.Log( "  save " + world_id + "_vendor_count: " + vendors.Count );
+				//}
 
 				int i = 0;
 				foreach( var kv in vendors ) {
@@ -104,13 +102,13 @@ namespace Capitalism.Logic {
 					tags.Set( world_id + "_vendor_total_purchases_str_" + i, json_total_purchases );
 					tags.Set( world_id + "_vendor_total_spendings_str_" + i, json_total_spendings );
 
-					if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
-						ErrorLogger.Log( "    save " + world_id + "_vendor_npc_types_" + i + ": " + (int)npc_type );
-						ErrorLogger.Log( "    save " + world_id + "_vendor_total_purchase_types_" + i + ": " + String.Join( ",", total_purchase_types ) );
-						ErrorLogger.Log( "    save " + world_id + "_vendor_total_spendings_types_" + i + ": " + String.Join( ",", total_spendings_types ) );
-						ErrorLogger.Log( "    save " + world_id + "_vendor_total_purchases_" + i + ": " + json_total_purchases );
-						ErrorLogger.Log( "    save " + world_id + "_vendor_total_spendings_" + i + ": " + json_total_spendings );
-					}
+					//if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
+					//	ErrorLogger.Log( "    save " + world_id + "_vendor_npc_types_" + i + ": " + (int)npc_type );
+					//	ErrorLogger.Log( "    save " + world_id + "_vendor_total_purchase_types_" + i + ": " + String.Join( ",", total_purchase_types ) );
+					//	ErrorLogger.Log( "    save " + world_id + "_vendor_total_spendings_types_" + i + ": " + String.Join( ",", total_spendings_types ) );
+					//	ErrorLogger.Log( "    save " + world_id + "_vendor_total_purchases_" + i + ": " + json_total_purchases );
+					//	ErrorLogger.Log( "    save " + world_id + "_vendor_total_spendings_" + i + ": " + json_total_spendings );
+					//}
 					i++;
 				}
 			}
@@ -135,7 +133,7 @@ namespace Capitalism.Logic {
 			}
 
 			if( player.talkNPC != -1 ) {
-				long money = PlayerHelper.CountMoney( player );
+				long money = PlayerItemHelpers.CountMoney( player );
 				long spent = this.LastMoney - money;
 
 				this.LastMoney = money;
@@ -184,13 +182,13 @@ namespace Capitalism.Logic {
 				ErrorLogger.Log( "AccountForPurchase - No shop npc." );
 				return null;
 			}
-			ISet<int> possible_purchases = PlayerHelper.FindPossiblePurchaseTypes( player, spent );
+			ISet<int> possible_purchases = PlayerItemHelpers.FindPossiblePurchaseTypes( player, spent );
 			Item item = null;
 			int stack = 1;
 			
 			if( possible_purchases.Count > 0 ) {
-				var changes_at = PlayerHelper.FindInventoryChanges( player, this.PrevMouseInfo, this.PrevInventoryInfos );
-				changes_at = ItemHelper.FilterByTypes( changes_at, possible_purchases );
+				var changes_at = PlayerItemHelpers.FindInventoryChanges( player, this.PrevMouseInfo, this.PrevInventoryInfos );
+				changes_at = ItemFinderHelpers.FilterByTypes( changes_at, possible_purchases );
 
 				if( changes_at.Count == 1 ) {
 					foreach( var entry in changes_at ) {
