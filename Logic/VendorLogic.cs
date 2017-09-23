@@ -16,7 +16,7 @@ namespace Capitalism.Logic {
 		////////////////
 
 		public static VendorLogic Create( int npc_type ) {
-			Chest shop = NPCHelpers.GetShop( npc_type );
+			Chest shop = NPCTownHelpers.GetShop( npc_type );
 			if( shop == null ) { return null; }
 
 			return new VendorLogic( npc_type );
@@ -32,7 +32,7 @@ namespace Capitalism.Logic {
 			this.TotalSpendings = new Dictionary<int, float>();
 			this.BasePrices = new Dictionary<int, long>();
 
-			Chest shop = NPCHelpers.GetShop( this.NpcType );
+			Chest shop = NPCTownHelpers.GetShop( this.NpcType );
 			ISet<int> found_types = new HashSet<int>();
 
 			for( int i=0; i<shop.item.Length; i++ ) {
@@ -75,7 +75,7 @@ namespace Capitalism.Logic {
 
 		public void UpdateShop( CapitalismMod mymod, Chest shop = null ) {
 			if( shop == null ) {
-				shop = NPCHelpers.GetShop( this.NpcType );
+				shop = NPCTownHelpers.GetShop( this.NpcType );
 				if( shop == null ) { return; }
 			}
 
@@ -105,7 +105,7 @@ namespace Capitalism.Logic {
 			int price = (int)this.GetPriceOf( mymod, item.type );
 
 			// Female NPCs during a bloodmoon markup their prices
-			bool is_grill = NPCHelpers.GetFemaleTownNpcTypes().Contains( this.NpcType );
+			bool is_grill = NPCTownHelpers.GetFemaleTownNpcTypes().Contains( this.NpcType );
 			if( Main.bloodMoon && is_grill ) {
 				price = (int)((float)price * mymod.Config.Data.FemaleBloodMoonMarkupPercent);
 			}
@@ -121,7 +121,7 @@ namespace Capitalism.Logic {
 
 				// Love struck NPCs markdown prices
 				if( npc.FindBuffIndex( 119 ) >= 0 ) {
-					bool is_gendered = !NPCHelpers.GetNonGenderedTownNpcTypes().Contains( this.NpcType );
+					bool is_gendered = !NPCTownHelpers.GetNonGenderedTownNpcTypes().Contains( this.NpcType );
 
 					if( is_gendered && (player.Male && is_grill) || (!player.Male && !is_grill) ) {
 						price = (int)((float)price * mymod.Config.Data.LovestruckMarkdownPercent);

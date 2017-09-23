@@ -57,13 +57,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CapitalismItemInfo.cs" />
+    <Compile Include="ConfigDefaults.cs" />
     <Compile Include="Logic\CapitalismLogic.cs" />
     <Compile Include="CapitalismMod.cs" />
-    <Compile Include="CapitalismNetProtocol.cs" />
     <Compile Include="CapitalismNPC.cs" />
     <Compile Include="Logic\VendorLogic.cs" />
     <Compile Include="CapitalismPlayer.cs" />
     <Compile Include="CapitalismWorld.cs" />
+    <Compile Include="NetProtocol\ClientPacketHandlers.cs" />
+    <Compile Include="NetProtocol\NetProtocolTypes.cs" />
+    <Compile Include="NetProtocol\ServerPacketHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

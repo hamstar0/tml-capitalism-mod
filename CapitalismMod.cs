@@ -1,32 +1,16 @@
-﻿using HamstarHelpers.Utilities.Config;
+﻿using Capitalism.NetProtocol;
+using HamstarHelpers.DebugHelpers;
+using HamstarHelpers.Utilities.Config;
 using System;
 using System.IO;
+using Terraria;
 using Terraria.ModLoader;
 
 
 namespace Capitalism {
-	public class ConfigurationData {
-		public string VersionSinceUpdate = "";
-
-		public bool Enabled = true;
-
-		public float MarkupExponent = 0.8f;
-		public float MarkupDivisor = 50f;
-		public float TaxMarkupPercent = 1.02f;
-		public float InfuriationMarkupPercent = 1.5f;
-
-		public float BiDailyDecayMarkdownPercent = 0.95f;
-
-		public float FemaleBloodMoonMarkupPercent = 1.1f;
-		public float LovestruckMarkdownPercent = 0.9f;
-		public float StinkyMarkupPercent = 1.1f;
-	}
-
-	
-
 	public class CapitalismMod : Mod {
 		public readonly static Version ConfigVersion = new Version(1, 3, 3);
-		public JsonConfig<ConfigurationData> Config { get; private set; }
+		public JsonConfig<CapitalismConfigData> Config { get; private set; }
 
 
 		public CapitalismMod() {
@@ -38,7 +22,7 @@ namespace Capitalism {
 				};
 
 				string filename = "Capitalism Config.json";
-				this.Config = new JsonConfig<ConfigurationData>( filename, "Mod Configs", new ConfigurationData() );
+				this.Config = new JsonConfig<CapitalismConfigData>( filename, "Mod Configs", new CapitalismConfigData() );
 			} catch( Exception e ) {
 				ErrorLogger.Log( e.ToString() );
 				throw e;
@@ -46,42 +30,40 @@ namespace Capitalism {
 		}
 
 		public override void Load() {
-			var old_config = new JsonConfig<ConfigurationData>( "Capitalism 1.1.0.json", "", new ConfigurationData() );
-			// Update old config to new location
-			if( old_config.LoadFile() ) {
-				old_config.DestroyFile();
-				old_config.SetFilePath( this.Config.FileName, "Mod Configs" );
-				this.Config = old_config;
-			} else if( !this.Config.LoadFile() ) {
+			var hamhelpmod = ModLoader.GetMod( "HamstarHelpers" );
+			var min_vers = new Version( 1, 1, 0 );
+
+			if( hamhelpmod.Version < min_vers ) {
+				throw new Exception( "Hamstar's Helpers must be version " + min_vers.ToString() + " or greater." );
+			}
+
+			this.LoadConfig();
+		}
+
+		private void LoadConfig() {
+			try {
+				if( !this.Config.LoadFile() ) {
+					this.Config.SaveFile();
+				}
+			} catch( Exception e ) {
+				DebugHelpers.Log( e.Message );
 				this.Config.SaveFile();
 			}
 
-			Version vers_since = this.Config.Data.VersionSinceUpdate != "" ?
-				new Version( this.Config.Data.VersionSinceUpdate ) :
-				new Version();
-
-			if( vers_since < CapitalismMod.ConfigVersion ) {
-				ErrorLogger.Log( "Capitalism config updated to " + CapitalismMod.ConfigVersion.ToString() );
-
-				if( vers_since < new Version( 1, 2, 1 ) ) {
-					this.Config.Data.FemaleBloodMoonMarkupPercent = new ConfigurationData().FemaleBloodMoonMarkupPercent;
-					this.Config.Data.LovestruckMarkdownPercent = new ConfigurationData().LovestruckMarkdownPercent;
-					this.Config.Data.StinkyMarkupPercent = new ConfigurationData().StinkyMarkupPercent;
-				}
-
-				this.Config.Data.VersionSinceUpdate = CapitalismMod.ConfigVersion.ToString();
+			if( this.Config.Data.UpdateToLatestVersion() ) {
+				ErrorLogger.Log( "Capitalism updated to " + CapitalismConfigData.ConfigVersion.ToString() );
 				this.Config.SaveFile();
 			}
 		}
 
+
 		////////////////
 
-		public override void HandlePacket( BinaryReader reader, int whoAmI ) {
-			try {
-				CapitalismNetProtocol.RoutePacket( this, reader );
-			} catch( Exception e ) {
-				ErrorLogger.Log( e.ToString() );
-				throw e;
+		public override void HandlePacket( BinaryReader reader, int player_who ) {
+			if( Main.netMode == 1 ) {   // Client
+				ClientPacketHandlers.HandlePacket( this, reader );
+			} else if( Main.netMode == 2 ) {    // Server
+				ServerPacketHandlers.HandlePacket( this, reader, player_who );
 			}
 		}
 	}

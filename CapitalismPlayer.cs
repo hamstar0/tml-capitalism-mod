@@ -1,8 +1,8 @@
 ﻿using Terraria.ModLoader;
 using Terraria;
 using Terraria.ModLoader.IO;
-using System;
 using Capitalism.Logic;
+using Capitalism.NetProtocol;
 
 
 namespace Capitalism {
@@ -13,9 +13,7 @@ namespace Capitalism {
 		////////////////
 
 		public override void Initialize() {
-			if( this.Logic == null ) {
-				this.Logic = new CapitalismLogic();
-			}
+			this.Logic = new CapitalismLogic();
 		}
 
 		public override void clientClone( ModPlayer clone ) {
@@ -33,7 +31,7 @@ namespace Capitalism {
 					}
 					
 					if( Main.netMode == 1 ) {
-						CapitalismNetProtocol.SendSettingsRequestFromClient( mymod, player );
+						ClientPacketHandlers.SendModSettingsRequestFromClient( mymod );
 					}
 				}
 			}
@@ -42,17 +40,14 @@ namespace Capitalism {
 		////////////////
 
 		public override void Load( TagCompound tags ) {
-			try {
-				var mymod = (CapitalismMod)this.mod;
-				int total_worlds = tags.GetInt( "vendor_world_count" );
+			if( !tags.ContainsKey( "vendor_world_count" ) ) { return; }
 
-				for( int i=0; i< total_worlds; i++ ) {
-					string id = tags.GetString( "vendor_world_id_" + i );
-					this.Logic.LoadVendorsForCurrentPlayer( mymod, tags, id );
-				}
-			} catch( Exception e ) {
-				ErrorLogger.Log( e.ToString() );
-				throw e;
+			var mymod = (CapitalismMod)this.mod;
+			int total_worlds = tags.GetInt( "vendor_world_count" );
+
+			for( int i=0; i< total_worlds; i++ ) {
+				string id = tags.GetString( "vendor_world_id_" + i );
+				this.Logic.LoadVendorsForCurrentPlayer( mymod, tags, id );
 			}
 		}
 

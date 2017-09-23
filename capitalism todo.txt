@@ -1,6 +1,8 @@
-v1.4.0
+Future
 -	Implement sell prices
+v1.4.0
 -	Add supply limits of items (based on price)
+-	Define 'bulk' items expected to get lots of purchases
 
 v1.3.2
 -	Add 'Enabled' config setting
