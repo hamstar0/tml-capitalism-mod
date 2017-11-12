@@ -5,7 +5,10 @@ using System;
 namespace Capitalism {
 	public class CapitalismConfigData : ConfigurationDataBase {
 		public readonly static Version ConfigVersion = new Version( 1, 2, 0 );
+		public readonly static string ConfigFileName = "Capitalism Config.json";
 
+
+		////////////////
 
 		public string VersionSinceUpdate = "";
 
@@ -48,11 +51,6 @@ namespace Capitalism {
 
 			return true;
 		}
-
-		////////////////
-
-		public string _OLD_SETTINGS_BELOW = "";
-
 
 		////////////////
 

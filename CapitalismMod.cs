@@ -9,32 +9,49 @@ using Terraria.ModLoader;
 
 namespace Capitalism {
 	public class CapitalismMod : Mod {
-		public readonly static Version ConfigVersion = new Version(1, 3, 3);
-		public JsonConfig<CapitalismConfigData> Config { get; private set; }
+		public static string GithubUserName { get { return "hamstar0"; } }
+		public static string GithubProjectName { get { return "tml-capitalism-mod"; } }
 
-
-		public CapitalismMod() {
-			try {
-				this.Properties = new ModProperties() {
-					Autoload = true,
-					AutoloadGores = true,
-					AutoloadSounds = true
-				};
-
-				string filename = "Capitalism Config.json";
-				this.Config = new JsonConfig<CapitalismConfigData>( filename, "Mod Configs", new CapitalismConfigData() );
-			} catch( Exception e ) {
-				ErrorLogger.Log( e.ToString() );
-				throw e;
+		public static string ConfigRelativeFilePath {
+			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar+ CapitalismConfigData.ConfigFileName; }
+		}
+		public static void ReloadConfigFromFile() {
+			if( CapitalismMod.Instance != null && Main.netMode != 1 ) {
+				CapitalismMod.Instance.Config.LoadFile();
 			}
 		}
 
+		public static CapitalismMod Instance { get; private set; }
+
+
+		////////////////
+
+		public JsonConfig<CapitalismConfigData> Config { get; private set; }
+
+
+		////////////////
+
+		public CapitalismMod() {
+			this.Properties = new ModProperties() {
+				Autoload = true,
+				AutoloadGores = true,
+				AutoloadSounds = true
+			};
+
+			string filename = "Capitalism Config.json";
+			this.Config = new JsonConfig<CapitalismConfigData>( filename, ConfigurationDataBase.RelativePath, new CapitalismConfigData() );
+		}
+
+		////////////////
+
 		public override void Load() {
+			CapitalismMod.Instance = this;
+
 			var hamhelpmod = ModLoader.GetMod( "HamstarHelpers" );
 			var min_vers = new Version( 1, 1, 0 );
 
 			if( hamhelpmod.Version < min_vers ) {
-				throw new Exception( "Hamstar's Helpers must be version " + min_vers.ToString() + " or greater." );
+				throw new Exception( "Hamstar Helpers must be version " + min_vers.ToString() + " or greater." );
 			}
 
 			this.LoadConfig();
@@ -54,6 +71,10 @@ namespace Capitalism {
 				ErrorLogger.Log( "Capitalism updated to " + CapitalismConfigData.ConfigVersion.ToString() );
 				this.Config.SaveFile();
 			}
+		}
+
+		public override void Unload() {
+			CapitalismMod.Instance = null;
 		}
 
 
