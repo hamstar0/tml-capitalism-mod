@@ -1,5 +1,5 @@
 author = hamstar
-version = 1.3.4.1
+version = 1.3.4.2
 displayName = Capitalism
 modReferences = HamstarHelpers
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
