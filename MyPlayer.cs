@@ -6,7 +6,7 @@ using Capitalism.NetProtocol;
 
 
 namespace Capitalism {
-	class CapitalismPlayer : ModPlayer {
+	class MyPlayer : ModPlayer {
 		private CapitalismLogic Logic;
 
 
@@ -18,7 +18,7 @@ namespace Capitalism {
 
 		public override void clientClone( ModPlayer clone ) {
 			base.clientClone( clone );
-			var myclone = (CapitalismPlayer)clone;
+			var myclone = (MyPlayer)clone;
 			myclone.Logic = this.Logic;
 		}
 

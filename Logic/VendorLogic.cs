@@ -6,7 +6,7 @@ using HamstarHelpers.NPCHelpers;
 
 
 namespace Capitalism.Logic {
-	public class VendorLogic {
+	class VendorLogic {
 		public int NpcType { get; private set; }
 		public IDictionary<int, long> BasePrices { get; private set; }
 		public IDictionary<int, float> TotalPurchases { get; private set; }
@@ -95,7 +95,7 @@ namespace Capitalism.Logic {
 
 				item.value = value;
 
-				var item_info = item.GetGlobalItem<CapitalismItemInfo>( mymod );
+				var item_info = item.GetGlobalItem<MyItemInfo>( mymod );
 				item_info.MarkupPercentPlus = markup;
 			}
 		}

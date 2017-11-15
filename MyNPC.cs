@@ -4,14 +4,14 @@ using Terraria.ModLoader;
 
 
 namespace Capitalism {
-	class CapitalismNPC : GlobalNPC {
+	class MyNPC : GlobalNPC {
 		public override void SetupShop( int npc_type, Chest shop, ref int next_slot ) {
 			var mymod = (CapitalismMod)this.mod;
 			if( !mymod.Config.Data.Enabled ) { return; }
 
 			try {
 				Player player = Main.player[Main.myPlayer];
-				var modplayer = player.GetModPlayer<CapitalismPlayer>( this.mod );
+				var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
 
 				modplayer.UpdateGivenShop( npc_type, shop, ref next_slot );
 			} catch( Exception e ) {
@@ -29,7 +29,7 @@ namespace Capitalism {
 			try {
 				Player player = Main.player[Main.myPlayer];
 				if( player != null ) { return check; }
-				var modplayer = player.GetModPlayer<CapitalismPlayer>( this.mod );
+				var modplayer = player.GetModPlayer<MyPlayer>( this.mod );
 				if( modplayer != null ) { return check; }
 
 				modplayer.InfuriateVendor( npc.type );

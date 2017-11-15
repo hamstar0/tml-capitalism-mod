@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 
 
 namespace Capitalism.NetProtocol {
-	public static class ClientPacketHandlers {
+	static class ClientPacketHandlers {
 		public static void HandlePacket( CapitalismMod mymod, BinaryReader reader ) {
 			NetProtocolTypes protocol = (NetProtocolTypes)reader.ReadByte();
 

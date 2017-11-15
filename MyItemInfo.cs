@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 
 namespace Capitalism {
-	class CapitalismItemInfo : GlobalItem {
+	class MyItemInfo : GlobalItem {
 		public override bool InstancePerEntity { get { return true; } }
 		//public override bool CloneNewInstances { get { return true; } }
 
@@ -13,7 +13,7 @@ namespace Capitalism {
 
 
 		public override GlobalItem Clone( Item item, Item item_clone ) {
-			var clone = (CapitalismItemInfo)base.Clone( item, item_clone );
+			var clone = (MyItemInfo)base.Clone( item, item_clone );
 			clone.MarkupPercentPlus = this.MarkupPercentPlus;
 			return clone;
 		}
