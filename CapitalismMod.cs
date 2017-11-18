@@ -14,7 +14,7 @@ namespace Capitalism {
 		public static string GithubUserName { get { return "hamstar0"; } }
 		public static string GithubProjectName { get { return "tml-capitalism-mod"; } }
 
-		public static string ConfigRelativeFilePath {
+		public static string ConfigFileRelativePath {
 			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar+ CapitalismConfigData.ConfigFileName; }
 		}
 		public static void ReloadConfigFromFile() {
