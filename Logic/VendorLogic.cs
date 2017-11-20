@@ -95,7 +95,7 @@ namespace Capitalism.Logic {
 
 				item.value = value;
 
-				var item_info = item.GetGlobalItem<MyItemInfo>( mymod );
+				var item_info = item.GetGlobalItem<CapitalismItemInfo>( mymod );
 				item_info.MarkupPercentPlus = markup;
 			}
 		}

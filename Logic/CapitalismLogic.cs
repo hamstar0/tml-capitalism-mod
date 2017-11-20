@@ -119,7 +119,7 @@ namespace Capitalism.Logic {
 		private bool IsReady( CapitalismMod mymod, Player player ) {
 			if( Main.netMode == 2 ) { return false; }	// Client of single only
 			if( player.whoAmI != Main.myPlayer ) { return false; }	// Current player only
-			if( mymod.GetModWorld<MyWorld>().ID == "" ) { return false; }
+			if( mymod.GetModWorld<CapitalismWorld>().ID == "" ) { return false; }
 			if( this.StartupDelay++ < 60*2 ) { return false; }
 			return true;
 		}
@@ -176,7 +176,7 @@ namespace Capitalism.Logic {
 		////////////////
 
 		private Item AccountForPurchase( CapitalismMod mymod, Player player, long spent, Item last_buy_item ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			NPC talk_npc = Main.npc[player.talkNPC];
 			if( talk_npc == null || !talk_npc.active ) {
 				ErrorLogger.Log( "AccountForPurchase - No shop npc." );
@@ -236,7 +236,7 @@ namespace Capitalism.Logic {
 		////////////////
 
 		public void UpdateGivenShop( CapitalismMod mymod, Player player, int npc_type, Chest shop, ref int nextSlot ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			if( modworld.ID.Length == 0 ) {
 				return;
 			}
@@ -251,7 +251,7 @@ namespace Capitalism.Logic {
 		}
 
 		public bool InfuriateVendor( CapitalismMod mymod, int npc_type ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			if( modworld.ID.Length == 0 ) {
 				ErrorLogger.Log( "InfuriateVendor - No world id set." );
 				return false;
@@ -288,7 +288,7 @@ namespace Capitalism.Logic {
 		////////////////
 
 		public void BoughtFrom( CapitalismMod mymod, Player player, NPC npc, Item item, int stack ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			if( modworld.ID.Length == 0 ) {
 				ErrorLogger.Log( "BoughtFrom - No world id." );
 				return;
@@ -320,7 +320,7 @@ Main.NewText( "Sold "+ item.name + " to "+_.name+" for "+earned+", deducted " + 
 
 
 		public void DecayAllVendorPrices( CapitalismMod mymod, Player player ) {
-			var modworld = mymod.GetModWorld<MyWorld>();
+			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			if( modworld.ID == null || modworld.ID.Length == 0 ) {
 				ErrorLogger.Log( "DecayAllVendorPrices - No world id." );
 				return;

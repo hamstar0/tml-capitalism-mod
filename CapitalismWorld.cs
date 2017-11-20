@@ -5,7 +5,7 @@ using Terraria.ModLoader.IO;
 
 
 namespace Capitalism {
-	class MyWorld : ModWorld {
+	class CapitalismWorld : ModWorld {
 		public string ID { get; private set; }
 
 
