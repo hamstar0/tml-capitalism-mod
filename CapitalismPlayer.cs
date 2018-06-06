@@ -3,6 +3,8 @@ using Terraria;
 using Terraria.ModLoader.IO;
 using Capitalism.Logic;
 using Capitalism.NetProtocol;
+using HamstarHelpers.Utilities.Network;
+using HamstarHelpers.TmlHelpers;
 
 
 namespace Capitalism {
@@ -11,6 +13,8 @@ namespace Capitalism {
 
 
 		////////////////
+
+		public override bool CloneNewInstances { get { return false; } }
 
 		public override void Initialize() {
 			this.Logic = new CapitalismLogic();
@@ -22,18 +26,24 @@ namespace Capitalism {
 			myclone.Logic = this.Logic;
 		}
 
+		////////////////
+
 		public override void OnEnterWorld( Player player ) {
-			if( Main.netMode != 2 ) {   // Not server
-				if( player.whoAmI == this.player.whoAmI ) { // Current player
-					var mymod = (CapitalismMod)this.mod;
-					if( !mymod.Config.LoadFile() ) {
-						mymod.Config.SaveFile();
-					}
-					
-					if( Main.netMode == 1 ) {
-						ClientPacketHandlers.SendModSettingsRequestFromClient( mymod );
-					}
+			if( player.whoAmI != this.player.whoAmI ) { return; }
+
+			var mymod = (CapitalismMod)this.mod;
+
+			if( Main.netMode == 0 ) {
+				if( !mymod.ConfigJson.LoadFile() ) {
+					mymod.ConfigJson.SaveFile();
 				}
+			}
+				
+			if( Main.netMode == 1 ) {
+				TmlLoadHelpers.AddWorldLoadOncePromise( () => {
+					PacketProtocol.QuickRequestToServer<ModSettingsProtocol>();
+					PacketProtocol.QuickRequestToServer<WorldDataProtocol>();
+				} );
 			}
 		}
 
@@ -69,7 +79,7 @@ namespace Capitalism {
 
 		public override void PreUpdate() {
 			var mymod = (CapitalismMod)this.mod;
-			if( !mymod.Config.Data.Enabled ) { return; }
+			if( !mymod.Config.Enabled ) { return; }
 
 			this.Logic.Update( (CapitalismMod)this.mod, this.player );
 		}
@@ -77,7 +87,7 @@ namespace Capitalism {
 
 		////////////////
 
-		public void UpdateGivenShop( int npc_type, Chest shop, ref int nextSlot ) {
+		public void UpdateGivenShop( int npc_type, Chest shop, ref int nextSlot ) {//////////s
 			if( this.Logic != null ) {
 				this.Logic.UpdateGivenShop( (CapitalismMod)this.mod, this.player, npc_type, shop, ref nextSlot );
 			}

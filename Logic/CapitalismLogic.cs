@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.ItemHelpers;
+﻿using HamstarHelpers.DebugHelpers;
+using HamstarHelpers.ItemHelpers;
 using HamstarHelpers.PlayerHelpers;
 using HamstarHelpers.Utilities.Config;
 using HamstarHelpers.WorldHelpers;
@@ -236,13 +237,10 @@ namespace Capitalism.Logic {
 
 		public void UpdateGivenShop( CapitalismMod mymod, Player player, int npc_type, Chest shop, ref int nextSlot ) {
 			var modworld = mymod.GetModWorld<CapitalismWorld>();
-			if( modworld.ID.Length == 0 ) {
-				return;
-			}
 
 			var vendor = this.GetOrCreateVendor( modworld.ID, npc_type );
 			if( vendor == null ) {
-				ErrorLogger.Log( "UpdateGivenShop - No such vendor of type " + npc_type );
+				LogHelpers.Log( "UpdateGivenShop - No such vendor of type " + npc_type );
 				return;
 			}
 

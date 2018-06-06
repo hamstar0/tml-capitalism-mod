@@ -1,34 +1,38 @@
-﻿using System;
-using System.IO;
+﻿using HamstarHelpers.WorldHelpers;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 
 namespace Capitalism {
 	class CapitalismWorld : ModWorld {
-		public string ID { get; private set; }
-
-
-		public override void Initialize() {
-			this.ID = Guid.NewGuid().ToString( "D" );
+		internal string _ID = "";
+		public string ID {
+			get {
+				if( string.IsNullOrEmpty(this._ID) ) {
+					return WorldHelpers.GetUniqueIdWithSeed();
+				} else {
+					return this._ID;
+				}
+			}
 		}
 
+
+		////////////////
+
 		public override void Load( TagCompound tags ) {
-			string id = tags.GetString( "world_id" );
-			if( id.Length > 0 ) { this.ID = id; }
+			if( tags.ContainsKey("world_id") ) {
+				this._ID = tags.GetString( "world_id" );
+			}
 		}
 
 		public override TagCompound Save() {
-			return new TagCompound { { "world_id", this.ID } };
-		}
+			var tags = new TagCompound();
 
+			if( !string.IsNullOrEmpty(this._ID) ) {
+				tags[ "world_id" ] = this._ID;
+			}
 
-		public override void NetReceive( BinaryReader reader ) {
-			this.ID = reader.ReadString();
-		}
-
-		public override void NetSend( BinaryWriter writer ) {
-			writer.Write( this.ID );
+			return tags;
 		}
 	}
 }
