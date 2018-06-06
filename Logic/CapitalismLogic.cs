@@ -1,6 +1,7 @@
 ﻿using HamstarHelpers.ItemHelpers;
 using HamstarHelpers.PlayerHelpers;
 using HamstarHelpers.Utilities.Config;
+using HamstarHelpers.WorldHelpers;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -119,7 +120,6 @@ namespace Capitalism.Logic {
 		private bool IsReady( CapitalismMod mymod, Player player ) {
 			if( Main.netMode == 2 ) { return false; }	// Client of single only
 			if( player.whoAmI != Main.myPlayer ) { return false; }	// Current player only
-			if( mymod.GetModWorld<CapitalismWorld>().ID == "" ) { return false; }
 			if( this.StartupDelay++ < 60*2 ) { return false; }
 			return true;
 		}
@@ -176,18 +176,17 @@ namespace Capitalism.Logic {
 		////////////////
 
 		private Item AccountForPurchase( CapitalismMod mymod, Player player, long spent, Item last_buy_item ) {
-			var modworld = mymod.GetModWorld<CapitalismWorld>();
 			NPC talk_npc = Main.npc[player.talkNPC];
 			if( talk_npc == null || !talk_npc.active ) {
 				ErrorLogger.Log( "AccountForPurchase - No shop npc." );
 				return null;
 			}
-			ISet<int> possible_purchases = PlayerItemHelpers.FindPossiblePurchaseTypes( player, spent );
+			ISet<int> possible_purchases = PlayerItemFinderHelpers.FindPossiblePurchaseTypes( player, spent );
 			Item item = null;
 			int stack = 1;
 			
 			if( possible_purchases.Count > 0 ) {
-				var changes_at = PlayerItemHelpers.FindInventoryChanges( player, this.PrevMouseInfo, this.PrevInventoryInfos );
+				var changes_at = PlayerItemFinderHelpers.FindInventoryChanges( player, this.PrevMouseInfo, this.PrevInventoryInfos );
 				changes_at = ItemFinderHelpers.FilterByTypes( changes_at, possible_purchases );
 
 				if( changes_at.Count == 1 ) {
@@ -212,7 +211,7 @@ namespace Capitalism.Logic {
 			}
 			if( item == null ) {
 				if( last_buy_item != null ) {
-					var vendor = this.GetOrCreateVendor( modworld.ID, talk_npc.type );
+					var vendor = this.GetOrCreateVendor( WorldHelpers.GetUniqueIdWithSeed(), talk_npc.type );
 					int value = (int)vendor.GetPriceOf( mymod, last_buy_item.type );
 
 					if( (spent % value) == 0 ) {

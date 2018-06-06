@@ -14,8 +14,6 @@ namespace Capitalism {
 
 		public bool Enabled = true;
 
-		public int DEBUGMODE = 0;
-
 		public float MarkupExponent = 0.8f;
 		public float MarkupDivisor = 50f;
 		public float TaxMarkupPercent = 1.02f;
@@ -50,12 +48,6 @@ namespace Capitalism {
 			this.VersionSinceUpdate = CapitalismConfigData.ConfigVersion.ToString();
 
 			return true;
-		}
-
-		////////////////
-
-		public bool IsDebugInfo() {
-			return (this.DEBUGMODE & 1) > 0;
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace Capitalism {
 		public static string GithubProjectName { get { return "tml-capitalism-mod"; } }
 
 		public static string ConfigFileRelativePath {
-			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar+ CapitalismConfigData.ConfigFileName; }
+			get { return ConfigurationDataBase.RelativePath + Path.DirectorySeparatorChar + CapitalismConfigData.ConfigFileName; }
 		}
 		public static void ReloadConfigFromFile() {
 			if( Main.netMode != 0 ) {
@@ -63,7 +63,7 @@ namespace Capitalism {
 					this.Config.SaveFile();
 				}
 			} catch( Exception e ) {
-				DebugHelpers.Log( e.Message );
+				LogHelpers.Log( e.Message );
 				this.Config.SaveFile();
 			}
 

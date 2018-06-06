@@ -14,7 +14,7 @@ namespace Capitalism.NetProtocol {
 				ServerPacketHandlers.ReceiveModSettingsRequestOnServer( mymod, reader, player_who );
 				break;
 			default:
-				/*if( mymod.IsDebugInfoMode() ) {*/ DebugHelpers.Log( "RouteReceivedServerPackets ...? " + protocol ); //}
+				/*if( mymod.IsDebugInfoMode() ) {*/ LogHelpers.Log( "RouteReceivedServerPackets ...? " + protocol ); //}
 				break;
 			}
 		}
