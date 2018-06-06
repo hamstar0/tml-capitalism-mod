@@ -87,9 +87,9 @@ namespace Capitalism {
 
 		////////////////
 
-		public void UpdateGivenShop( int npc_type, Chest shop, ref int nextSlot ) {//////////s
+		public void UpdateGivenShop( int npc_type, Chest shop, ref int next_slot ) {
 			if( this.Logic != null ) {
-				this.Logic.UpdateGivenShop( (CapitalismMod)this.mod, this.player, npc_type, shop, ref nextSlot );
+				this.Logic.UpdateGivenShop( (CapitalismMod)this.mod, this.player, npc_type, shop, ref next_slot );
 			}
 		}
 

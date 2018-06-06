@@ -1,7 +1,7 @@
 ﻿namespace Capitalism {
-	public static class CapitalismAPI {
+	public static partial class CapitalismAPI {
 		public static CapitalismConfigData GetModSettings() {
-			return CapitalismMod.Instance.Config.Data;
+			return CapitalismMod.Instance.Config;
 		}
 	}
 }

@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API.cs" />
+    <Compile Include="API_Call.cs" />
     <Compile Include="CapitalismItemInfo.cs" />
     <Compile Include="CapitalismWorld.cs" />
     <Compile Include="Config.cs" />

@@ -107,7 +107,7 @@ namespace Capitalism.Logic {
 			// Female NPCs during a bloodmoon markup their prices
 			bool is_grill = NPCTownHelpers.GetFemaleTownNpcTypes().Contains( this.NpcType );
 			if( Main.bloodMoon && is_grill ) {
-				price = (int)((float)price * mymod.Config.Data.FemaleBloodMoonMarkupPercent);
+				price = (int)((float)price * mymod.Config.FemaleBloodMoonMarkupPercent);
 			}
 
 			NPC npc = NPCFinderHelpers.FindFirstNpcByType( this.NpcType );
@@ -116,7 +116,7 @@ namespace Capitalism.Logic {
 			if( npc != null && player != null ) {
 				// Stinky players markup prices
 				if( player.FindBuffIndex( 120 ) >= 0 ) {
-					price = (int)((float)price * mymod.Config.Data.StinkyMarkupPercent);
+					price = (int)((float)price * mymod.Config.StinkyMarkupPercent);
 				}
 
 				// Love struck NPCs markdown prices
@@ -124,7 +124,7 @@ namespace Capitalism.Logic {
 					bool is_gendered = !NPCTownHelpers.GetNonGenderedTownNpcTypes().Contains( this.NpcType );
 
 					if( is_gendered && (player.Male && is_grill) || (!player.Male && !is_grill) ) {
-						price = (int)((float)price * mymod.Config.Data.LovestruckMarkdownPercent);
+						price = (int)((float)price * mymod.Config.LovestruckMarkdownPercent);
 					}
 				}
 			}
@@ -169,7 +169,7 @@ namespace Capitalism.Logic {
 		}
 		
 		public void DecayPrices( CapitalismMod mymod ) {
-			float rate = mymod.Config.Data.BiDailyDecayMarkdownPercent;
+			float rate = mymod.Config.BiDailyDecayMarkdownPercent;
 
 			foreach( int item_type in this.TotalPurchases.Keys.ToList() ) {
 				this.TotalPurchases[item_type] *= rate;
@@ -178,7 +178,7 @@ namespace Capitalism.Logic {
 		}
 		
 		public void Infuriate( CapitalismMod mymod ) {
-			float rate = mymod.Config.Data.InfuriationMarkupPercent;
+			float rate = mymod.Config.InfuriationMarkupPercent;
 
 			foreach( int item_type in this.TotalPurchases.Keys.ToList() ) {
 				this.TotalPurchases[item_type] *= rate;
@@ -193,14 +193,14 @@ namespace Capitalism.Logic {
 			// v2 formula: b + ( b * t * 0.02 * (0.996 ^ ((t/4) + (s/10000))) )
 			// v3 formula: b + ( (b * t)^0.8 ) / 50
 
-			float exp = mymod.Config.Data.MarkupExponent;
-			float div = mymod.Config.Data.MarkupDivisor;
+			float exp = mymod.Config.MarkupExponent;
+			float div = mymod.Config.MarkupDivisor;
 
 			//if( spendings == 0 ) { spendings = float.Epsilon; }
 			float markup = (float)Math.Pow( (base_price * purchases), exp ) / div;
 
 			if( NPC.taxCollector ) {
-				markup *= mymod.Config.Data.TaxMarkupPercent;  // Is it worth it?!?!?!
+				markup *= mymod.Config.TaxMarkupPercent;  // Is it worth it?!?!?!
 			}
 			
 			return base_price + markup;

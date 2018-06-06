@@ -236,9 +236,9 @@ namespace Capitalism.Logic {
 		////////////////
 
 		public void UpdateGivenShop( CapitalismMod mymod, Player player, int npc_type, Chest shop, ref int nextSlot ) {
-			var modworld = mymod.GetModWorld<CapitalismWorld>();
+			var myworld = mymod.GetModWorld<CapitalismWorld>();
 
-			var vendor = this.GetOrCreateVendor( modworld.ID, npc_type );
+			var vendor = this.GetOrCreateVendor( myworld.ID, npc_type );
 			if( vendor == null ) {
 				LogHelpers.Log( "UpdateGivenShop - No such vendor of type " + npc_type );
 				return;
@@ -248,13 +248,9 @@ namespace Capitalism.Logic {
 		}
 
 		public bool InfuriateVendor( CapitalismMod mymod, int npc_type ) {
-			var modworld = mymod.GetModWorld<CapitalismWorld>();
-			if( modworld.ID.Length == 0 ) {
-				ErrorLogger.Log( "InfuriateVendor - No world id set." );
-				return false;
-			}
+			var myworld = mymod.GetModWorld<CapitalismWorld>();
 
-			var vendor = this.GetOrCreateVendor( modworld.ID, npc_type );
+			var vendor = this.GetOrCreateVendor( myworld.ID, npc_type );
 			if( vendor == null ) {
 				ErrorLogger.Log( "InfuriateVendor - No such vendor of type " + npc_type );
 				return false;
@@ -286,10 +282,6 @@ namespace Capitalism.Logic {
 
 		public void BoughtFrom( CapitalismMod mymod, Player player, NPC npc, Item item, int stack ) {
 			var modworld = mymod.GetModWorld<CapitalismWorld>();
-			if( modworld.ID.Length == 0 ) {
-				ErrorLogger.Log( "BoughtFrom - No world id." );
-				return;
-			}
 
 			var vendor = this.GetOrCreateVendor( modworld.ID, npc.type );
 			if( vendor != null ) {

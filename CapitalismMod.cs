@@ -1,4 +1,5 @@
 ﻿using Capitalism.NetProtocol;
+using HamstarHelpers.DebugHelpers;
 using HamstarHelpers.Utilities.Config;
 using System;
 using System.IO;
@@ -62,13 +63,28 @@ namespace Capitalism {
 			}
 
 			if( this.Config.UpdateToLatestVersion() ) {
-				ErrorLogger.Log( "Capitalism updated to " + CapitalismConfigData.ConfigVersion.ToString() );
+				LogHelpers.Log( "Capitalism updated to " + CapitalismConfigData.ConfigVersion.ToString() );
 				this.ConfigJson.SaveFile();
 			}
 		}
 
 		public override void Unload() {
 			CapitalismMod.Instance = null;
+		}
+
+
+		////////////////
+
+		public override object Call( params object[] args ) {
+			if( args.Length == 0 ) { throw new Exception( "Undefined call type." ); }
+
+			string call_type = args[0] as string;
+			if( args == null ) { throw new Exception( "Invalid call type." ); }
+
+			var new_args = new object[args.Length - 1];
+			Array.Copy( args, 1, new_args, 0, args.Length - 1 );
+
+			return CapitalismAPI.Call( call_type, new_args );
 		}
 	}
 }
