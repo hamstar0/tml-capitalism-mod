@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.WorldHelpers;
+﻿using HamstarHelpers.Helpers.WorldHelpers;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 

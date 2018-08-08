@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Utilities.Network;
+﻿using HamstarHelpers.Components.Network;
 
 
 namespace Capitalism.NetProtocol {
@@ -6,7 +6,7 @@ namespace Capitalism.NetProtocol {
 		public string OldID;
 
 
-		public override void SetServerDefaults() {
+		protected override void SetServerDefaults() {
 			var myworld = CapitalismMod.Instance.GetModWorld<CapitalismWorld>();
 
 			this.OldID = myworld.ID;

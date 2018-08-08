@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Terraria;
 using System;
-using HamstarHelpers.NPCHelpers;
+using HamstarHelpers.Helpers.NPCHelpers;
 
 
 namespace Capitalism.Logic {

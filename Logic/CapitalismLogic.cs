@@ -1,8 +1,8 @@
-﻿using HamstarHelpers.DebugHelpers;
-using HamstarHelpers.ItemHelpers;
-using HamstarHelpers.PlayerHelpers;
-using HamstarHelpers.Utilities.Config;
-using HamstarHelpers.WorldHelpers;
+﻿using HamstarHelpers.Components.Config;
+using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Helpers.ItemHelpers;
+using HamstarHelpers.Helpers.PlayerHelpers;
+using HamstarHelpers.Helpers.WorldHelpers;
 using System;
 using System.Collections.Generic;
 using Terraria;

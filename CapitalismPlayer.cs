@@ -3,8 +3,8 @@ using Terraria;
 using Terraria.ModLoader.IO;
 using Capitalism.Logic;
 using Capitalism.NetProtocol;
-using HamstarHelpers.Utilities.Network;
-using HamstarHelpers.TmlHelpers;
+using HamstarHelpers.Services.Promises;
+using HamstarHelpers.Components.Network;
 
 
 namespace Capitalism {
@@ -40,7 +40,7 @@ namespace Capitalism {
 			}
 				
 			if( Main.netMode == 1 ) {
-				TmlLoadHelpers.AddWorldLoadOncePromise( () => {
+				Promises.AddWorldLoadOncePromise( () => {
 					PacketProtocol.QuickRequestToServer<ModSettingsProtocol>();
 					PacketProtocol.QuickRequestToServer<WorldDataProtocol>();
 				} );

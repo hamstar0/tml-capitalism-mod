@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Utilities.Network;
+﻿using HamstarHelpers.Components.Network;
 
 
 namespace Capitalism.NetProtocol {
@@ -6,7 +6,7 @@ namespace Capitalism.NetProtocol {
 		public CapitalismConfigData Settings;
 
 
-		public override void SetServerDefaults() {
+		protected override void SetServerDefaults() {
 			this.Settings = CapitalismMod.Instance.Config;
 		}
 
