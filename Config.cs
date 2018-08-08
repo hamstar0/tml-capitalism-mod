@@ -39,12 +39,6 @@ namespace Capitalism {
 				return false;
 			}
 
-			if( vers_since < new Version(1, 2, 1) ) {
-				this.FemaleBloodMoonMarkupPercent = new_config.FemaleBloodMoonMarkupPercent;
-				this.LovestruckMarkdownPercent = new_config.LovestruckMarkdownPercent;
-				this.StinkyMarkupPercent = new_config.StinkyMarkupPercent;
-			}
-
 			this.VersionSinceUpdate = CapitalismConfigData.ConfigVersion.ToString();
 
 			return true;

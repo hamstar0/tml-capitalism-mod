@@ -26,7 +26,18 @@ namespace Capitalism {
 			myclone.Logic = this.Logic;
 		}
 
+
 		////////////////
+
+		public override void SyncPlayer( int to_who, int from_who, bool new_player ) {
+			var mymod = (CapitalismMod)this.mod;
+
+			if( Main.netMode == 2 ) {
+				if( to_who == -1 && from_who == this.player.whoAmI ) {
+					this.OnServerConnect();
+				}
+			}
+		}
 
 		public override void OnEnterWorld( Player player ) {
 			if( player.whoAmI != this.player.whoAmI ) { return; }
@@ -36,16 +47,33 @@ namespace Capitalism {
 			if( Main.netMode == 0 ) {
 				if( !mymod.ConfigJson.LoadFile() ) {
 					mymod.ConfigJson.SaveFile();
+					ErrorLogger.Log( "Durability config " + CapitalismConfigData.ConfigVersion.ToString() + " created (ModPlayer.OnEnterWorld())." );
 				}
 			}
-				
+
+			if( Main.netMode == 0 ) {
+				this.OnSingleConnect();
+			}
 			if( Main.netMode == 1 ) {
-				Promises.AddWorldLoadOncePromise( () => {
-					PacketProtocol.QuickRequestToServer<ModSettingsProtocol>();
-					PacketProtocol.QuickRequestToServer<WorldDataProtocol>();
-				} );
+				this.OnClientConnect();
 			}
 		}
+
+		////////////////
+
+		private void OnSingleConnect() {
+		}
+
+		private void OnClientConnect() {
+			Promises.AddWorldLoadOncePromise( () => {
+				PacketProtocol.QuickRequestToServer<ModSettingsProtocol>();
+				PacketProtocol.QuickRequestToServer<WorldDataProtocol>();
+			} );
+		}
+
+		private void OnServerConnect() {
+		}
+
 
 		////////////////
 
