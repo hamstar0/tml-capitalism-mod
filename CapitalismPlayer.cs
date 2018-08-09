@@ -40,14 +40,15 @@ namespace Capitalism {
 		}
 
 		public override void OnEnterWorld( Player player ) {
-			if( player.whoAmI != this.player.whoAmI ) { return; }
+			if( player.whoAmI != Main.myPlayer ) { return; }
+			if( this.player.whoAmI != Main.myPlayer ) { return; }
 
 			var mymod = (CapitalismMod)this.mod;
 
 			if( Main.netMode == 0 ) {
 				if( !mymod.ConfigJson.LoadFile() ) {
 					mymod.ConfigJson.SaveFile();
-					ErrorLogger.Log( "Durability config " + CapitalismConfigData.ConfigVersion.ToString() + " created (ModPlayer.OnEnterWorld())." );
+					ErrorLogger.Log( "Capitalism config " + CapitalismConfigData.ConfigVersion.ToString() + " created (ModPlayer.OnEnterWorld())." );
 				}
 			}
 

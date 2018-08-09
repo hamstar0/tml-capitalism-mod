@@ -1,4 +1,5 @@
 ﻿using HamstarHelpers.Components.Network;
+using HamstarHelpers.Components.Network.Data;
 
 
 namespace Capitalism.NetProtocol {
@@ -6,9 +7,17 @@ namespace Capitalism.NetProtocol {
 		public CapitalismConfigData Settings;
 
 
+		////////////////
+
+		private ModSettingsProtocol( PacketProtocolDataConstructorLock ctor_lock ) { }
+
+		////////////////
+
 		protected override void SetServerDefaults() {
 			this.Settings = CapitalismMod.Instance.Config;
 		}
+
+		////////////////
 
 		protected override void ReceiveWithClient() {
 			CapitalismMod.Instance.ConfigJson.SetData( this.Settings );
