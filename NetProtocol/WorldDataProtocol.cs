@@ -3,17 +3,17 @@ using HamstarHelpers.Components.Network.Data;
 
 
 namespace Capitalism.NetProtocol {
-	class WorldDataProtocol : PacketProtocol {
+	class WorldDataProtocol : PacketProtocolRequestToServer {
 		public string OldID;
 
 
 		////////////////
 
-		private WorldDataProtocol( PacketProtocolDataConstructorLock ctor_lock ) { }
+		protected WorldDataProtocol( PacketProtocolDataConstructorLock ctor_lock ) : base( ctor_lock ) { }
 
 		////////////////
 
-		protected override void SetServerDefaults( int to_who ) {
+		protected override void InitializeServerSendData( int to_who ) {
 			var myworld = CapitalismMod.Instance.GetModWorld<CapitalismWorld>();
 
 			this.OldID = myworld.ID;
@@ -21,7 +21,7 @@ namespace Capitalism.NetProtocol {
 
 		////////////////
 
-		protected override void ReceiveWithClient() {
+		protected override void ReceiveReply() {
 			if( !string.IsNullOrEmpty(this.OldID) ) {
 				var myworld = CapitalismMod.Instance.GetModWorld<CapitalismWorld>();
 				myworld._ID = this.OldID;
