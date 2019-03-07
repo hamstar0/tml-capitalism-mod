@@ -4,7 +4,6 @@ using System;
 
 namespace Capitalism {
 	public class CapitalismConfigData : ConfigurationDataBase {
-		public readonly static Version ConfigVersion = new Version( 1, 2, 0 );
 		public readonly static string ConfigFileName = "Capitalism Config.json";
 
 
@@ -30,16 +29,17 @@ namespace Capitalism {
 		////////////////
 
 		public bool UpdateToLatestVersion() {
-			var new_config = new CapitalismConfigData();
-			var vers_since = this.VersionSinceUpdate != "" ?
+			var mymod = CapitalismMod.Instance;
+			var newConfig = new CapitalismConfigData();
+			var versSince = this.VersionSinceUpdate != "" ?
 				new Version( this.VersionSinceUpdate ) :
 				new Version();
 
-			if( vers_since >= CapitalismConfigData.ConfigVersion ) {
+			if( versSince >= mymod.Version ) {
 				return false;
 			}
 
-			this.VersionSinceUpdate = CapitalismConfigData.ConfigVersion.ToString();
+			this.VersionSinceUpdate = mymod.Version.ToString();
 
 			return true;
 		}

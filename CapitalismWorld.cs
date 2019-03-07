@@ -9,7 +9,7 @@ namespace Capitalism {
 		public string ID {
 			get {
 				if( string.IsNullOrEmpty(this._ID) ) {
-					return WorldHelpers.GetUniqueIdWithSeed();
+					return WorldHelpers.GetUniqueId(true);
 				} else {
 					return this._ID;
 				}

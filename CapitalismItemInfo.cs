@@ -10,14 +10,14 @@ namespace Capitalism {
 
 		////////////////
 
-		public override bool InstancePerEntity { get { return true; } }
+		public override bool InstancePerEntity => true;
 		//public override bool CloneNewInstances { get { return true; } }
 
 
 		////////////////
 
-		public override GlobalItem Clone( Item item, Item item_clone ) {
-			var clone = (CapitalismItemInfo)base.Clone( item, item_clone );
+		public override GlobalItem Clone( Item item, Item itemClone ) {
+			var clone = (CapitalismItemInfo)base.Clone( item, itemClone );
 			clone.MarkupPercentPlus = this.MarkupPercentPlus;
 			return clone;
 		}

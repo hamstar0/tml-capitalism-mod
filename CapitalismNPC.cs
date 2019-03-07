@@ -1,4 +1,5 @@
-﻿using HamstarHelpers.Helpers.DebugHelpers;
+﻿using HamstarHelpers.Components.Errors;
+using HamstarHelpers.Helpers.DebugHelpers;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -6,18 +7,17 @@ using Terraria.ModLoader;
 
 namespace Capitalism {
 	class CapitalismNPC : GlobalNPC {
-		public override void SetupShop( int npc_type, Chest shop, ref int next_slot ) {
+		public override void SetupShop( int npcType, Chest shop, ref int nextSlot ) {
 			var mymod = (CapitalismMod)this.mod;
 			if( !mymod.Config.Enabled ) { return; }
 
 			try {
 				Player player = Main.player[Main.myPlayer];
-				var myplayer = player.GetModPlayer<CapitalismPlayer>( this.mod );
+				var myplayer = player.GetModPlayer<CapitalismPlayer>();
 
-				myplayer.UpdateGivenShop( npc_type, shop, ref next_slot );
+				myplayer.UpdateGivenShop( npcType, shop, ref nextSlot );
 			} catch( Exception e ) {
-				LogHelpers.Log( "Capitalism - " + e.ToString() );
-				throw e;
+				throw new HamstarException( "", e );
 			}
 		}
 
@@ -35,8 +35,7 @@ namespace Capitalism {
 
 				myplayer.InfuriateVendor( npc.type );
 			} catch( Exception e ) {
-				LogHelpers.Log( "Capitalism - " + e.ToString() );
-				throw e;
+				throw new HamstarException( "", e );
 			}
 
 			return check;

@@ -5,6 +5,7 @@ using Capitalism.Logic;
 using Capitalism.NetProtocol;
 using HamstarHelpers.Services.Promises;
 using HamstarHelpers.Components.Network;
+using HamstarHelpers.Helpers.DebugHelpers;
 
 
 namespace Capitalism {
@@ -14,7 +15,7 @@ namespace Capitalism {
 
 		////////////////
 
-		public override bool CloneNewInstances { get { return false; } }
+		public override bool CloneNewInstances => false;
 
 		public override void Initialize() {
 			this.Logic = new CapitalismLogic();
@@ -29,11 +30,11 @@ namespace Capitalism {
 
 		////////////////
 
-		public override void SyncPlayer( int to_who, int from_who, bool new_player ) {
+		public override void SyncPlayer( int toWho, int fromWho, bool newPlayer ) {
 			var mymod = (CapitalismMod)this.mod;
 
 			if( Main.netMode == 2 ) {
-				if( to_who == -1 && from_who == this.player.whoAmI ) {
+				if( toWho == -1 && fromWho == this.player.whoAmI ) {
 					this.OnServerConnect();
 				}
 			}
@@ -48,7 +49,7 @@ namespace Capitalism {
 			if( Main.netMode == 0 ) {
 				if( !mymod.ConfigJson.LoadFile() ) {
 					mymod.ConfigJson.SaveFile();
-					ErrorLogger.Log( "Capitalism config " + CapitalismConfigData.ConfigVersion.ToString() + " created (ModPlayer.OnEnterWorld())." );
+					LogHelpers.Alert( "Capitalism config " + mymod.Version.ToString() + " created." );
 				}
 			}
 
@@ -67,8 +68,8 @@ namespace Capitalism {
 
 		private void OnClientConnect() {
 			Promises.AddWorldLoadOncePromise( () => {
-				PacketProtocol.QuickRequestToServer<ModSettingsProtocol>();
-				PacketProtocol.QuickRequestToServer<WorldDataProtocol>();
+				PacketProtocolRequestToServer.QuickRequest<ModSettingsProtocol>( -1 );
+				PacketProtocolRequestToServer.QuickRequest<WorldDataProtocol>( -1 );
 			} );
 		}
 
@@ -82,9 +83,9 @@ namespace Capitalism {
 			if( !tags.ContainsKey( "vendor_world_count" ) ) { return; }
 
 			var mymod = (CapitalismMod)this.mod;
-			int total_worlds = tags.GetInt( "vendor_world_count" );
+			int totalWorlds = tags.GetInt( "vendor_world_count" );
 
-			for( int i=0; i< total_worlds; i++ ) {
+			for( int i=0; i< totalWorlds; i++ ) {
 				string id = tags.GetString( "vendor_world_id_" + i );
 				this.Logic.LoadVendorsForCurrentPlayer( mymod, tags, id );
 			}
@@ -110,21 +111,21 @@ namespace Capitalism {
 			var mymod = (CapitalismMod)this.mod;
 			if( !mymod.Config.Enabled ) { return; }
 
-			this.Logic.Update( (CapitalismMod)this.mod, this.player );
+			this.Logic.Update( this.player );
 		}
 
 
 		////////////////
 
-		public void UpdateGivenShop( int npc_type, Chest shop, ref int next_slot ) {
+		public void UpdateGivenShop( int npcType, Chest shop, ref int nextSlot ) {
 			if( this.Logic != null ) {
-				this.Logic.UpdateGivenShop( (CapitalismMod)this.mod, this.player, npc_type, shop, ref next_slot );
+				this.Logic.UpdateGivenShop( this.player, npcType, shop, ref nextSlot );
 			}
 		}
 
-		public bool InfuriateVendor( int npc_type ) {
+		public bool InfuriateVendor( int npcType ) {
 			if( this.Logic != null ) {
-				return this.Logic.InfuriateVendor( (CapitalismMod)this.mod, npc_type );
+				return this.Logic.InfuriateVendor( npcType );
 			}
 			return false;
 		}

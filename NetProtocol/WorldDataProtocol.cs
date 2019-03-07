@@ -1,5 +1,4 @@
 ﻿using HamstarHelpers.Components.Network;
-using HamstarHelpers.Components.Network.Data;
 
 
 namespace Capitalism.NetProtocol {
@@ -9,11 +8,11 @@ namespace Capitalism.NetProtocol {
 
 		////////////////
 
-		protected WorldDataProtocol( PacketProtocolDataConstructorLock ctor_lock ) : base( ctor_lock ) { }
+		private WorldDataProtocol() { }
 
 		////////////////
 
-		protected override void InitializeServerSendData( int to_who ) {
+		protected override void InitializeServerSendData( int toWho ) {
 			var myworld = CapitalismMod.Instance.GetModWorld<CapitalismWorld>();
 
 			this.OldID = myworld.ID;
