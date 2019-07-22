@@ -1,6 +1,4 @@
-﻿using HamstarHelpers.Components.Config;
-using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.TmlHelpers.ModHelpers;
+﻿using HamstarHelpers.Helpers.TModLoader.Mods;
 using System;
 using Terraria.ModLoader;
 
@@ -13,34 +11,20 @@ namespace Capitalism {
 
 		////////////////
 
-		public JsonConfig<CapitalismConfigData> ConfigJson { get; private set; }
-		public CapitalismConfigData Config => this.ConfigJson.Data;
+		public CapitalismConfig Config { get; private set; }
+
 
 
 		////////////////
 
 		public CapitalismMod() {
-			string filename = "Capitalism Config.json";
-			this.ConfigJson = new JsonConfig<CapitalismConfigData>( filename, ConfigurationDataBase.RelativePath, new CapitalismConfigData() );
+			this.Config = new CapitalismConfig();
 		}
 
 		////////////////
 
 		public override void Load() {
 			CapitalismMod.Instance = this;
-
-			this.LoadConfig();
-		}
-
-		private void LoadConfig() {
-			if( !this.ConfigJson.LoadFile() ) {
-				this.ConfigJson.SaveFile();
-			}
-
-			if( this.Config.UpdateToLatestVersion() ) {
-				LogHelpers.Log( "Capitalism updated to " + this.Version.ToString() );
-				this.ConfigJson.SaveFile();
-			}
 		}
 
 		public override void Unload() {

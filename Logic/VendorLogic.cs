@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Terraria;
 using System;
-using HamstarHelpers.Helpers.NPCHelpers;
+using HamstarHelpers.Helpers.NPCs;
 
 
 namespace Capitalism.Logic {
@@ -110,7 +110,7 @@ namespace Capitalism.Logic {
 			// Female NPCs during a bloodmoon markup their prices
 			bool isGrill = NPCTownHelpers.GetFemaleTownNpcTypes().Contains( this.NpcType );
 			if( Main.bloodMoon && isGrill ) {
-				price = (int)((float)price * mymod.Config.FemaleBloodMoonMarkupPercent);
+				price = (int)((float)price * mymod.Config.FemaleBloodMoonSellPricePercent);
 			}
 
 			NPC npc = NPCFinderHelpers.FindFirstNpcByType( this.NpcType );
@@ -119,7 +119,7 @@ namespace Capitalism.Logic {
 			if( npc != null && player != null ) {
 				// Stinky players markup prices
 				if( player.FindBuffIndex( 120 ) >= 0 ) {
-					price = (int)((float)price * mymod.Config.StinkyMarkupPercent);
+					price = (int)((float)price * mymod.Config.StinkySellPricePercent);
 				}
 
 				// Love struck NPCs markdown prices
@@ -127,7 +127,7 @@ namespace Capitalism.Logic {
 					bool isGendered = !NPCTownHelpers.GetNonGenderedTownNpcTypes().Contains( this.NpcType );
 
 					if( isGendered && (player.Male && isGrill) || (!player.Male && !isGrill) ) {
-						price = (int)((float)price * mymod.Config.LovestruckMarkdownPercent);
+						price = (int)((float)price * mymod.Config.LovestruckSellPricePercent);
 					}
 				}
 			}

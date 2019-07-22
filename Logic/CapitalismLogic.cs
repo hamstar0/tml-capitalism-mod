@@ -1,12 +1,11 @@
-﻿using HamstarHelpers.Components.Config;
-using HamstarHelpers.Helpers.DebugHelpers;
-using HamstarHelpers.Helpers.ItemHelpers;
-using HamstarHelpers.Helpers.PlayerHelpers;
-using HamstarHelpers.Helpers.WorldHelpers;
+﻿using HamstarHelpers.Helpers.Debug;
+using HamstarHelpers.Helpers.Items;
+using HamstarHelpers.Helpers.Players;
+using HamstarHelpers.Helpers.World;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 
@@ -54,8 +53,8 @@ namespace Capitalism.Logic {
 					string jsonTotalPurchases = tags.GetString( worldId + "_vendor_total_purchases_str_" + i );
 					string jsonTotalSpendings = tags.GetString( worldId + "_vendor_total_spendings_str_" + i );
 
-					float[] totalPurchases = JsonConfig<float[]>.Deserialize( jsonTotalPurchases );
-					float[] totalSpendings = JsonConfig<float[]>.Deserialize( jsonTotalSpendings );
+					float[] totalPurchases = JsonConvert.DeserializeObject<float[]>( jsonTotalPurchases );
+					float[] totalSpendings = JsonConvert.DeserializeObject<float[]>( jsonTotalSpendings );
 					
 					//if( (DebugHelper.DEBUGMODE & 1) > 0 ) {
 					//	ErrorLogger.Log( "    load " + world_id + "_vendor_npc_types_" + i + ": " + npc_type );
@@ -97,8 +96,8 @@ namespace Capitalism.Logic {
 					float[] totalPurchases, totalSpendings;
 
 					vendor.SaveTotalSpendings( out totalPurchaseTypes, out totalSpendingsTypes, out totalPurchases, out totalSpendings );
-					string jsonTotalPurchases = JsonConfig<float[]>.Serialize( totalPurchases );
-					string jsonTotalSpendings = JsonConfig<float[]>.Serialize( totalSpendings );
+					string jsonTotalPurchases = JsonConvert.SerializeObject( totalPurchases );
+					string jsonTotalSpendings = JsonConvert.SerializeObject( totalSpendings );
 
 					tags.Set( worldId + "_vendor_npc_types_" + i, npcType );
 					tags.Set( worldId + "_vendor_total_purchase_types_" + i, totalPurchaseTypes );
@@ -137,7 +136,7 @@ namespace Capitalism.Logic {
 			var mymod = CapitalismMod.Instance;
 
 			if( player.talkNPC != -1 ) {
-				long money = PlayerItemHelpers.CountMoney( player );
+				long money = PlayerItemHelpers.CountMoney( player, false );
 				long spent = this.LastMoney - money;
 
 				this.LastMoney = money;
@@ -182,12 +181,12 @@ namespace Capitalism.Logic {
 		private Item AccountForPurchase( Player player, long spent, Item lastBuyItem ) {
 			NPC talkNpc = Main.npc[player.talkNPC];
 			if( talkNpc == null || !talkNpc.active ) {
-				ErrorLogger.Log( "AccountForPurchase - No shop npc." );
+				LogHelpers.Log( "AccountForPurchase - No shop npc." );
 				return null;
 			}
 
 			var mymod = CapitalismMod.Instance;
-			ISet<int> possiblePurchases = PlayerItemFinderHelpers.FindPossiblePurchaseTypes( player, spent );
+			ISet<int> possiblePurchases = ItemFinderHelpers.FindPossiblePurchaseTypes( player.inventory, spent );
 			Item item = null;
 			int stack = 1;
 			
@@ -217,7 +216,7 @@ namespace Capitalism.Logic {
 			}
 			if( item == null ) {
 				if( lastBuyItem != null ) {
-					var vendor = this.GetOrCreateVendor( WorldHelpers.GetUniqueId(true), talkNpc.type );
+					var vendor = this.GetOrCreateVendor( WorldHelpers.GetUniqueIdForCurrentWorld(true), talkNpc.type );
 					int value = (int)vendor.GetPriceOf( lastBuyItem.type );
 
 					if( (spent % value) == 0 ) {

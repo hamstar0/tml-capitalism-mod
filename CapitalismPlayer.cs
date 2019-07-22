@@ -3,9 +3,7 @@ using Terraria;
 using Terraria.ModLoader.IO;
 using Capitalism.Logic;
 using Capitalism.NetProtocol;
-using HamstarHelpers.Services.Promises;
-using HamstarHelpers.Components.Network;
-using HamstarHelpers.Helpers.DebugHelpers;
+using HamstarHelpers.Services.Hooks.LoadHooks;
 
 
 namespace Capitalism {
@@ -47,13 +45,6 @@ namespace Capitalism {
 			var mymod = (CapitalismMod)this.mod;
 
 			if( Main.netMode == 0 ) {
-				if( !mymod.ConfigJson.LoadFile() ) {
-					mymod.ConfigJson.SaveFile();
-					LogHelpers.Alert( "Capitalism config " + mymod.Version.ToString() + " created." );
-				}
-			}
-
-			if( Main.netMode == 0 ) {
 				this.OnSingleConnect();
 			}
 			if( Main.netMode == 1 ) {
@@ -67,9 +58,8 @@ namespace Capitalism {
 		}
 
 		private void OnClientConnect() {
-			Promises.AddWorldLoadOncePromise( () => {
-				PacketProtocolRequestToServer.QuickRequest<ModSettingsProtocol>( -1 );
-				PacketProtocolRequestToServer.QuickRequest<WorldDataProtocol>( -1 );
+			LoadHooks.AddWorldLoadOnceHook( () => {
+				WorldDataProtocol.QuickRequest();
 			} );
 		}
 

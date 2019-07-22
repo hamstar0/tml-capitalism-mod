@@ -1,7 +1,6 @@
 author = hamstar
-version = 1.4.2.3
+version = 1.5.0
 displayName = Capitalism
-modReferences = HamstarHelpers@4.2.3.2
+modReferences = HamstarHelpers@5.0.0
 buildIgnore = *.csproj, *.user, *.bat, obj\*, bin\*, .vs\*, .git\*
-languageVersion = 6
 homepage = https://forums.terraria.org/index.php?threads/capitalism.52930/

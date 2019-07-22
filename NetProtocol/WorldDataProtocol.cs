@@ -1,9 +1,18 @@
-﻿using HamstarHelpers.Components.Network;
+﻿using HamstarHelpers.Components.Protocols.Packet.Interfaces;
 
 
 namespace Capitalism.NetProtocol {
 	class WorldDataProtocol : PacketProtocolRequestToServer {
+		public static void QuickRequest() {
+			PacketProtocolRequestToServer.QuickRequest<WorldDataProtocol>( -1 );
+		}
+
+
+
+		////////////////
+
 		public string OldID;
+
 
 
 		////////////////

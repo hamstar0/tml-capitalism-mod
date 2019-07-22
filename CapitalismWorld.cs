@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Helpers.WorldHelpers;
+﻿using HamstarHelpers.Helpers.World;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -9,7 +9,7 @@ namespace Capitalism {
 		public string ID {
 			get {
 				if( string.IsNullOrEmpty(this._ID) ) {
-					return WorldHelpers.GetUniqueId(true);
+					return WorldHelpers.GetUniqueIdForCurrentWorld(true);
 				} else {
 					return this._ID;
 				}
