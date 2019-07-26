@@ -6,20 +6,18 @@ using Terraria.ModLoader;
 namespace Capitalism {
 	partial class CapitalismMod : Mod {
 		public static CapitalismMod Instance { get; private set; }
-		
-
-
-		////////////////
-
-		public CapitalismConfig Config { get; private set; }
 
 
 
 		////////////////
 
-		public CapitalismMod() {
-			this.Config = new CapitalismConfig();
-		}
+		public CapitalismConfig Config => this.GetConfig<CapitalismConfig>();
+
+
+
+		////////////////
+
+		public CapitalismMod() { }
 
 		////////////////
 
