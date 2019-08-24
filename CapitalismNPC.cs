@@ -1,4 +1,4 @@
-﻿using HamstarHelpers.Components.Errors;
+﻿using HamstarHelpers.Classes.Errors;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -16,7 +16,7 @@ namespace Capitalism {
 
 				myplayer.UpdateGivenShop( npcType, shop, ref nextSlot );
 			} catch( Exception e ) {
-				throw new HamstarException( "", e );
+				throw new ModHelpersException( "", e );
 			}
 		}
 
@@ -34,7 +34,7 @@ namespace Capitalism {
 
 				myplayer.InfuriateVendor( npc.type );
 			} catch( Exception e ) {
-				throw new HamstarException( "", e );
+				throw new ModHelpersException( "", e );
 			}
 
 			return check;
