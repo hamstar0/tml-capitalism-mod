@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 
@@ -240,8 +241,7 @@ namespace Capitalism.Logic {
 		////////////////
 
 		public void UpdateGivenShop( Player player, int npcType, Chest shop, ref int nextSlot ) {
-			var mymod = CapitalismMod.Instance;
-			var myworld = mymod.GetModWorld<CapitalismWorld>();
+			var myworld = ModContent.GetInstance<CapitalismWorld>();
 
 			var vendor = this.GetOrCreateVendor( myworld.ID, npcType );
 			if( vendor == null ) {
@@ -254,7 +254,7 @@ namespace Capitalism.Logic {
 
 		public bool InfuriateVendor( int npcType ) {
 			var mymod = CapitalismMod.Instance;
-			var myworld = mymod.GetModWorld<CapitalismWorld>();
+			var myworld = ModContent.GetInstance<CapitalismWorld>();
 
 			var vendor = this.GetOrCreateVendor( myworld.ID, npcType );
 			if( vendor == null ) {
@@ -288,7 +288,7 @@ namespace Capitalism.Logic {
 
 		public void BoughtFrom( Player player, NPC npc, Item item, int stack ) {
 			var mymod = CapitalismMod.Instance;
-			var modworld = mymod.GetModWorld<CapitalismWorld>();
+			var modworld = ModContent.GetInstance<CapitalismWorld>();
 
 			var vendor = this.GetOrCreateVendor( modworld.ID, npc.type );
 			if( vendor != null ) {
@@ -316,8 +316,7 @@ Main.NewText( "Sold "+ item.name + " to "+_.name+" for "+earned+", deducted " + 
 
 
 		public void DecayAllVendorPrices( Player player ) {
-			var mymod = CapitalismMod.Instance;
-			var modworld = mymod.GetModWorld<CapitalismWorld>();
+			var modworld = ModContent.GetInstance<CapitalismWorld>();
 			if( modworld.ID == null || modworld.ID.Length == 0 ) {
 				LogHelpers.Warn( "No world id." );
 				return;

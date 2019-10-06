@@ -29,7 +29,7 @@ namespace Capitalism {
 			try {
 				Player player = Main.player[Main.myPlayer];
 				if( player != null ) { return check; }
-				var myplayer = player.GetModPlayer<CapitalismPlayer>( this.mod );
+				var myplayer = ModContent.GetInstance<CapitalismPlayer>();
 				if( myplayer != null ) { return check; }
 
 				myplayer.InfuriateVendor( npc.type );

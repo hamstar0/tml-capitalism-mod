@@ -1,5 +1,5 @@
 ﻿using HamstarHelpers.Classes.Protocols.Packet.Interfaces;
-
+using Terraria.ModLoader;
 
 namespace Capitalism.NetProtocol {
 	class WorldDataProtocol : PacketProtocolRequestToServer {
@@ -22,7 +22,7 @@ namespace Capitalism.NetProtocol {
 		////////////////
 
 		protected override void InitializeServerSendData( int toWho ) {
-			var myworld = CapitalismMod.Instance.GetModWorld<CapitalismWorld>();
+			var myworld = ModContent.GetInstance<CapitalismWorld>();
 
 			this.OldID = myworld.ID;
 		}
@@ -31,7 +31,7 @@ namespace Capitalism.NetProtocol {
 
 		protected override void ReceiveReply() {
 			if( !string.IsNullOrEmpty(this.OldID) ) {
-				var myworld = CapitalismMod.Instance.GetModWorld<CapitalismWorld>();
+				var myworld = ModContent.GetInstance<CapitalismWorld>();
 				myworld._ID = this.OldID;
 			}
 		}

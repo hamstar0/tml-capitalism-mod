@@ -11,7 +11,7 @@ namespace Capitalism {
 
 		////////////////
 
-		public CapitalismConfig Config => this.GetConfig<CapitalismConfig>();
+		public CapitalismConfig Config => ModContent.GetInstance<CapitalismConfig>();
 
 
 
