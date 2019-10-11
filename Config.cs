@@ -19,7 +19,10 @@ namespace Capitalism {
 
 
 		[Header( "Formula for computing markup:\n"+
-			"  b=base value\n  t=total purchases\n  a=exponent factor (default 0.8)\n  c=divsor factor (default 50)\n \n"+
+			"  b=base value\n" +
+			"  t=total purchases\n"+
+			"  a=exponent value (default 0.8)\n"+
+			"  c=divsor value (default 50)\n \n"+
 			"b + (b * t)^a / c" )]
 		[JsonIgnore]
 		[Label("Markup (+copper) for item (cost: 10 silv), bought 20x")]
