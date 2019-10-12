@@ -8,6 +8,11 @@ using Terraria.ModLoader.Config;
 
 
 namespace Capitalism {
+	class MyFloatInputElement : FloatInputElement { }
+
+
+
+
 	public class CapitalismConfig : ModConfig {
 		public override ConfigScope Mode => ConfigScope.ServerSide;
 
@@ -40,51 +45,51 @@ namespace Capitalism {
 		[Tooltip( "A factor for computing markup." )]
 		[Range( 0f, 5f )]
 		[DefaultValue( 0.8f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float MarkupExponent { get; set; } = 0.8f;
 
 		[Tooltip( "A factor for computing markup." )]
 		[Range( Single.Epsilon, 1000f )]
 		[DefaultValue( 50f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float MarkupDivisor { get; set; } = 50f;
 
 		[Tooltip("% markup if a Tax Collector NPC has moved in.")]
 		[Range( 0f, 10f )]
 		[DefaultValue( 1.02f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float TaxMarkupPercent { get; set; } = 1.02f;
 
 		[Tooltip("% markup after an NPC has died.")]
 		[Range( 0f, 10f )]
 		[DefaultValue( 1.5f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float InfuriationMarkupPercent { get; set; } = 1.5f;
 
 
 		[Tooltip("% that markup prices 'decay' to, twice per day.")]
 		[Range( 0f, 10f )]
 		[DefaultValue( 0.95f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float BiDailyDecayMarkdownPercent { get; set; } = 0.95f;
 
 
 		[Tooltip("% scale during a blood moon from female NPCs.")]
 		[Range( 0f, 10f )]
 		[DefaultValue( 1.1f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float FemaleBloodMoonSellPricePercent { get; set; } = 1.1f;
 
 		[Tooltip( "% scale from a 'lovestruck' NPC." )]
 		[Range( 0f, 10f )]
 		[DefaultValue( 0.9f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float LovestruckSellPricePercent { get; set; } = 0.9f;
 
 		[Tooltip( "% scale from a 'stinky' NPC." )]
 		[Range( 0f, 10f )]
 		[DefaultValue( 1.1f )]
-		[CustomModConfigItem( typeof( FloatInputElement ) )]
+		[CustomModConfigItem( typeof( MyFloatInputElement ) )]
 		public float StinkySellPricePercent { get; set; } = 1.1f;
 
 
